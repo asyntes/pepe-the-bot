@@ -17,15 +17,24 @@ export default function Pepe3D() {
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
+        renderer.setSize(window.innerWidth, window.innerHeight);
         mountRef.current.appendChild(renderer.domElement);
 
         // Luci
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
         scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
         directionalLight.position.set(5, 5, 5);
         scene.add(directionalLight);
+        
+        // Additional lights for better illumination
+        const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight2.position.set(-5, 5, -5);
+        scene.add(directionalLight2);
+        
+        const pointLight = new THREE.PointLight(0xffffff, 0.6, 50);
+        pointLight.position.set(0, 10, 0);
+        scene.add(pointLight);
 
         // Carica modello
         const loader = new GLTFLoader();
@@ -45,7 +54,9 @@ export default function Pepe3D() {
 
         // Orbit controls
         const controls = new OrbitControls(camera, renderer.domElement);
-        camera.position.z = 5;
+        controls.target.set(0, 4, 0);
+        camera.position.set(0, 4, 3);
+        controls.update();
 
         // Animazione loop (applica morph qui, senza ri-creare)
         const animate = () => {
@@ -68,7 +79,7 @@ export default function Pepe3D() {
         const handleResize = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
+            renderer.setSize(window.innerWidth, window.innerHeight);
         };
         window.addEventListener('resize', handleResize);
 
@@ -81,9 +92,14 @@ export default function Pepe3D() {
     }, []); // Dependency vuota: Esegui solo al mount
 
     return (
-        <div>
-            <div ref={mountRef} className="w-full h-96 bg-gray-200" />
-            <button onClick={() => setMorphValue((prev) => (prev === 0 ? 1 : 0))}>Toggle Morph</button>
+        <div className="relative w-full h-screen">
+            <div ref={mountRef} className="w-full h-full" />
+            <button 
+                onClick={() => setMorphValue((prev) => (prev === 0 ? 1 : 0))}
+                className="absolute top-4 left-4 z-10 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+                Toggle Morph
+            </button>
         </div>
     );
 }
