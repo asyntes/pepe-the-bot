@@ -18,7 +18,6 @@ export default function TomieTerminal() {
     const [input, setInput] = useState('');
     const [currentMood, setCurrentMood] = useState<Mood>('neutral');
     const [isTyping, setIsTyping] = useState(false);
-    const [showCursor, setShowCursor] = useState(true);
     const [inputFocused, setInputFocused] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -271,12 +270,6 @@ export default function TomieTerminal() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setShowCursor(prev => !prev);
-        }, 530);
-        return () => clearInterval(interval);
-    }, []);
 
     useEffect(() => {
         // Initialize messages after component mounts to avoid hydration issues
@@ -317,10 +310,12 @@ export default function TomieTerminal() {
             }
             // Force zoom reset
             setTimeout(() => {
-                document.body.style.zoom = '1';
-                document.documentElement.style.zoom = '1';
+                document.body.style.setProperty('zoom', '1');
+                document.documentElement.style.setProperty('zoom', '1');
+                document.body.style.transform = 'scale(1)';
+                document.documentElement.style.transform = 'scale(1)';
                 // Force a reflow to apply changes
-                document.body.offsetHeight;
+                void document.body.offsetHeight;
             }, 100);
         };
         
@@ -515,8 +510,29 @@ export default function TomieTerminal() {
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            onFocus={() => setInputFocused(true)}
+                            onFocus={(e) => {
+                                setInputFocused(true);
+                                // Prevent zoom on focus
+                                e.preventDefault();
+                                const viewport = document.querySelector('meta[name=viewport]');
+                                if (viewport) {
+                                    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no');
+                                }
+                                setTimeout(() => {
+                                    document.body.style.setProperty('zoom', '1');
+                                    document.documentElement.style.setProperty('zoom', '1');
+                                    document.body.style.transform = 'scale(1)';
+                                    document.documentElement.style.transform = 'scale(1)';
+                                }, 0);
+                            }}
                             onBlur={() => setInputFocused(false)}
+                            onTouchStart={() => {
+                                // Prevent zoom on touch
+                                const viewport = document.querySelector('meta[name=viewport]');
+                                if (viewport) {
+                                    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no');
+                                }
+                            }}
                             disabled={isTyping}
                             className="w-full bg-transparent border-none outline-none terminal-input caret-transparent"
                             style={{

@@ -48,6 +48,7 @@ html, body {
   html {
     -webkit-text-size-adjust: none !important;
     zoom: 1 !important;
+    transform: scale(1) !important;
   }
 }
 
@@ -55,5 +56,6 @@ html, body {
   html {
     -webkit-text-size-adjust: none !important;
     zoom: 1 !important;
+    transform: scale(1) !important;
   }
 }
