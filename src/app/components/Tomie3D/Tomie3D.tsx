@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -8,7 +8,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 export default function Tomie3D() {
     const mountRef = useRef<HTMLDivElement>(null);
     const modelRef = useRef<THREE.Group | null>(null);
-    const [morphValue, setMorphValue] = useState(0); // Stato per morph (0-1)
+    const mixerRef = useRef<THREE.AnimationMixer | null>(null);
+    const clockRef = useRef<THREE.Clock>(new THREE.Clock());
 
     useEffect(() => {
         if (!mountRef.current) return;
@@ -36,7 +37,6 @@ export default function Tomie3D() {
         pointLight.position.set(0, 10, 0);
         scene.add(pointLight);
 
-        // Carica modello
         const loader = new GLTFLoader();
         loader.load('/models/tomie.glb', (gltf) => {
             const model = gltf.scene;
@@ -44,38 +44,32 @@ export default function Tomie3D() {
             scene.add(model);
             modelRef.current = model;
 
-            // Log per debug: Controlla se ha morph targets
-            model.traverse((child) => {
-                if (child instanceof THREE.Mesh && child.morphTargetInfluences) {
-                    console.log('Morph targets trovati:', child.morphTargetInfluences.length);
-                }
-            });
+            if (gltf.animations && gltf.animations.length > 0) {
+                const mixer = new THREE.AnimationMixer(model);
+                mixerRef.current = mixer;
+                
+                const walkAction = mixer.clipAction(gltf.animations[0]);
+                walkAction.play();
+            }
         });
 
-        // Orbit controls
         const controls = new OrbitControls(camera, renderer.domElement);
-        controls.target.set(0, 4, 0);
-        camera.position.set(0, 4, 3);
+
+        camera.position.set(0, 0, 5);
         controls.update();
 
-        // Animazione loop (applica morph qui, senza ri-creare)
         const animate = () => {
             requestAnimationFrame(animate);
-            if (modelRef.current) {
-                modelRef.current.rotation.y += 0.005;
-
-                // Applica morphing dinamicamente
-                modelRef.current.traverse((child) => {
-                    if (child instanceof THREE.Mesh && child.morphTargetInfluences) {
-                        child.morphTargetInfluences[0] = morphValue; // Indice 0 per esempio; cambia se necessario
-                    }
-                });
+            
+            const delta = clockRef.current.getDelta();
+            if (mixerRef.current) {
+                mixerRef.current.update(delta);
             }
+            
             renderer.render(scene, camera);
         };
         animate();
 
-        // Resize handler
         const handleResize = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
@@ -83,23 +77,19 @@ export default function Tomie3D() {
         };
         window.addEventListener('resize', handleResize);
 
-        // Cleanup
         return () => {
             window.removeEventListener('resize', handleResize);
+            if (mixerRef.current) {
+                mixerRef.current.stopAllAction();
+            }
             mountRef.current?.removeChild(renderer.domElement);
             renderer.dispose();
         };
-    }, []); // Dependency vuota: Esegui solo al mount
+    }, []);
 
     return (
-        <div className="relative w-full h-screen">
+        <div className="w-full h-screen">
             <div ref={mountRef} className="w-full h-full" />
-            <button
-                onClick={() => setMorphValue((prev) => (prev === 0 ? 1 : 0))}
-                className="absolute top-4 left-4 z-10 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-                Toggle Morph
-            </button>
         </div>
     );
 }
