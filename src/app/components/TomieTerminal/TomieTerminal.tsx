@@ -55,6 +55,14 @@ export default function TomieTerminal() {
         }
     };
 
+    const moodEyes = {
+        neutral: '/svg/normal-eye.svg',
+        angry: '/svg/angry-eye.svg',
+        trusted: '/svg/confident-eye.svg',
+        excited: '/svg/excited-eye.svg',
+        confused: '/svg/confused-eye.svg'
+    };
+
     const analyzeMood = (text: string): Mood => {
         const lowerText = text.toLowerCase();
 
@@ -377,9 +385,32 @@ export default function TomieTerminal() {
                 </div>
             </div>
 
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 terminal-scrollbar" style={{ height: 'calc(100vh - 120px)' }}>
-                {messages.map((message, index) => (
+            {/* Messages Area Container */}
+            <div className="flex-1 relative" style={{ height: 'calc(100vh - 120px)' }}>
+                {/* Eye Background - Fixed */}
+                <div 
+                    className="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-1000 z-0"
+                    style={{ opacity: 0.15 }}
+                >
+                    <img 
+                        src={moodEyes[currentMood]}
+                        alt=""
+                        className="w-64 h-64 object-contain transition-all duration-1000"
+                        style={{ 
+                            filter: `brightness(0) saturate(100%) ${
+                                currentMood === 'neutral' ? 'invert(47%) sepia(89%) saturate(2718%) hue-rotate(188deg) brightness(99%) contrast(101%)' :
+                                currentMood === 'angry' ? 'invert(23%) sepia(89%) saturate(6151%) hue-rotate(354deg) brightness(99%) contrast(107%)' :
+                                currentMood === 'trusted' ? 'invert(52%) sepia(98%) saturate(4466%) hue-rotate(269deg) brightness(96%) contrast(106%)' :
+                                currentMood === 'excited' ? 'invert(63%) sepia(99%) saturate(1174%) hue-rotate(15deg) brightness(103%) contrast(107%)' :
+                                'invert(69%) sepia(89%) saturate(6151%) hue-rotate(88deg) brightness(99%) contrast(107%)'
+                            }`
+                        }}
+                    />
+                </div>
+                
+                {/* Messages - Scrollable */}
+                <div className="overflow-y-auto p-4 terminal-scrollbar relative z-10 h-full">
+                    {messages.map((message, index) => (
                     <div
                         key={message.id}
                         className="mb-2 transition-all duration-500"
@@ -420,8 +451,9 @@ export default function TomieTerminal() {
                             </span>
                         </div>
                     </div>
-                ))}
-                <div ref={messagesEndRef} />
+                    ))}
+                    <div ref={messagesEndRef} />
+                </div>
             </div>
 
             {/* Input Area */}
