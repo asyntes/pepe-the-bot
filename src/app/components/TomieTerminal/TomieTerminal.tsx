@@ -318,9 +318,9 @@ export default function TomieTerminal() {
             // Force zoom reset
             setTimeout(() => {
                 document.body.style.zoom = '1';
-                if (window.visualViewport) {
-                    window.visualViewport.scale = 1;
-                }
+                document.documentElement.style.zoom = '1';
+                // Force a reflow to apply changes
+                document.body.offsetHeight;
             }, 100);
         };
         
