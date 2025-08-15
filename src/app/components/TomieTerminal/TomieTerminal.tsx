@@ -19,6 +19,7 @@ export default function TomieTerminal() {
     const [currentMood, setCurrentMood] = useState<Mood>('neutral');
     const [isTyping, setIsTyping] = useState(false);
     const [showCursor, setShowCursor] = useState(true);
+    const [inputFocused, setInputFocused] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -150,7 +151,7 @@ export default function TomieTerminal() {
                 const newMessages = [...prev];
                 const lastMessage = newMessages[newMessages.length - 1];
                 if (lastMessage && !lastMessage.isUser) {
-                    lastMessage.text = currentText + (i < chars.length - 1 ? '█' : '');
+                    lastMessage.text = currentText;
                     lastMessage.mood = mood;
                 }
                 return newMessages;
@@ -160,6 +161,11 @@ export default function TomieTerminal() {
         }
 
         setIsTyping(false);
+        
+        // Refocus input after typing ends
+        setTimeout(() => {
+            inputRef.current?.focus();
+        }, 100);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -448,6 +454,15 @@ export default function TomieTerminal() {
                                 {message.text.split('\\n').map((line, i) => (
                                     i === 0 ? line : <div key={i} className="ml-12">{line}</div>
                                 ))}
+                                {/* Show typing cursor only for the last AI message while typing */}
+                                {!message.isUser && isTyping && index === messages.length - 1 && (
+                                    <span 
+                                        className="ml-0.5"
+                                        style={{ color: currentColors.primary }}
+                                    >
+                                        █
+                                    </span>
+                                )}
                             </span>
                         </div>
                     </div>
@@ -460,22 +475,32 @@ export default function TomieTerminal() {
             <form onSubmit={handleSubmit} className="p-4">
                 <div className="flex items-center gap-2">
                     <span style={{ color: currentColors.secondary }}>{'>'}</span>
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        disabled={isTyping}
-                        className="flex-1 bg-transparent border-none outline-none terminal-input"
-                        style={{ color: currentColors.primary }}
-                        placeholder={isTyping ? "AI is typing..." : "Enter command..."}
-                    />
-                    <span
-                        className={`transition-opacity duration-100 ${showCursor ? 'opacity-100' : 'opacity-0'}`}
-                        style={{ color: currentColors.primary }}
-                    >
-                        █
-                    </span>
+                    <div className="flex-1 relative">
+                        <input
+                            ref={inputRef}
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onFocus={() => setInputFocused(true)}
+                            onBlur={() => setInputFocused(false)}
+                            disabled={isTyping}
+                            className="w-full bg-transparent border-none outline-none terminal-input caret-transparent"
+                            style={{ color: currentColors.primary }}
+                            placeholder={isTyping ? "AI is typing..." : (!inputFocused ? "Enter command..." : "")}
+                        />
+                        {/* Custom cursor */}
+                        {!isTyping && inputFocused && (
+                            <span
+                                className="absolute top-0 pointer-events-none"
+                                style={{ 
+                                    color: currentColors.primary,
+                                    left: `${input.length * 0.6}em`
+                                }}
+                            >
+                                █
+                            </span>
+                        )}
+                    </div>
                 </div>
                 <div
                     className="mt-2 h-px transition-all duration-1000"
