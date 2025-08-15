@@ -205,7 +205,7 @@ export default function TomieTerminal() {
 
                 const helpMessage: Message = {
                     id: (Date.now() + 1).toString(),
-                    text: 'Available commands:\\n/clear - Clear terminal\\n/help - Show this help\\n\\',
+                    text: 'Available commands:\\n/clear - Clear terminal\\n/help - Show this help',
                     isUser: false,
                     timestamp: new Date(),
                     mood: 'neutral'
@@ -411,10 +411,10 @@ export default function TomieTerminal() {
                         className="w-64 h-64 object-contain transition-all duration-1000"
                         style={{
                             filter: `brightness(0) saturate(100%) ${currentMood === 'neutral' ? 'invert(47%) sepia(89%) saturate(2718%) hue-rotate(188deg) brightness(99%) contrast(101%)' :
-                                    currentMood === 'angry' ? 'invert(23%) sepia(89%) saturate(6151%) hue-rotate(354deg) brightness(99%) contrast(107%)' :
-                                        currentMood === 'trusted' ? 'invert(52%) sepia(98%) saturate(4466%) hue-rotate(269deg) brightness(96%) contrast(106%)' :
-                                            currentMood === 'excited' ? 'invert(63%) sepia(99%) saturate(1174%) hue-rotate(15deg) brightness(103%) contrast(107%)' :
-                                                'invert(69%) sepia(89%) saturate(6151%) hue-rotate(88deg) brightness(99%) contrast(107%)'
+                                currentMood === 'angry' ? 'invert(23%) sepia(89%) saturate(6151%) hue-rotate(354deg) brightness(99%) contrast(107%)' :
+                                    currentMood === 'trusted' ? 'invert(52%) sepia(98%) saturate(4466%) hue-rotate(269deg) brightness(96%) contrast(106%)' :
+                                        currentMood === 'excited' ? 'invert(63%) sepia(99%) saturate(1174%) hue-rotate(15deg) brightness(103%) contrast(107%)' :
+                                            'invert(69%) sepia(89%) saturate(6151%) hue-rotate(88deg) brightness(99%) contrast(107%)'
                                 }`
                         }}
                     />
@@ -491,19 +491,20 @@ export default function TomieTerminal() {
                             onBlur={() => setInputFocused(false)}
                             disabled={isTyping}
                             className="w-full bg-transparent border-none outline-none terminal-input caret-transparent"
-                            style={{ 
+                            style={{
                                 color: currentColors.primary,
-                                fontSize: '16px'
+                                fontSize: '0.875rem'
                             }}
                             placeholder={isTyping ? "AI is typing..." : (!inputFocused ? "Enter command..." : "")}
                         />
                         {/* Custom cursor */}
                         {!isTyping && inputFocused && (
                             <span
-                                className="absolute top-0 pointer-events-none"
+                                className="absolute top-0 pointer-events-none font-mono"
                                 style={{
                                     color: currentColors.primary,
-                                    left: `${input.length * 0.6}em`
+                                    fontSize: '0.875rem',
+                                    left: `${input.length * 0.525}rem`
                                 }}
                             >
                                 █
