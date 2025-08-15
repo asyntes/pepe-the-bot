@@ -161,7 +161,7 @@ export default function TomieTerminal() {
         }
 
         setIsTyping(false);
-        
+
         // Refocus input after typing ends
         setTimeout(() => {
             inputRef.current?.focus();
@@ -205,7 +205,7 @@ export default function TomieTerminal() {
 
                 const helpMessage: Message = {
                     id: (Date.now() + 1).toString(),
-                    text: 'Available commands:\\n/clear - Clear terminal\\n/help - Show this help\\n\\nTip: My mood changes based on your words!',
+                    text: 'Available commands:\\n/clear - Clear terminal\\n/help - Show this help\\n\\',
                     isUser: false,
                     timestamp: new Date(),
                     mood: 'neutral'
@@ -295,6 +295,13 @@ export default function TomieTerminal() {
                     isUser: false,
                     timestamp: new Date(),
                     mood: 'neutral'
+                },
+                {
+                    id: '3',
+                    text: 'Hello! I\'m Tomie, your guide to unlocking the mysteries of the universe. Ready to dive into the unknown?',
+                    isUser: false,
+                    timestamp: new Date(),
+                    mood: 'excited'
                 }
             ];
             setMessages(initialMessages);
@@ -394,78 +401,77 @@ export default function TomieTerminal() {
             {/* Messages Area Container */}
             <div className="flex-1 relative" style={{ height: 'calc(100vh - 120px)' }}>
                 {/* Eye Background - Fixed */}
-                <div 
+                <div
                     className="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-1000 z-0"
                     style={{ opacity: 0.15 }}
                 >
-                    <img 
+                    <img
                         src={moodEyes[currentMood]}
                         alt=""
                         className="w-64 h-64 object-contain transition-all duration-1000"
-                        style={{ 
-                            filter: `brightness(0) saturate(100%) ${
-                                currentMood === 'neutral' ? 'invert(47%) sepia(89%) saturate(2718%) hue-rotate(188deg) brightness(99%) contrast(101%)' :
-                                currentMood === 'angry' ? 'invert(23%) sepia(89%) saturate(6151%) hue-rotate(354deg) brightness(99%) contrast(107%)' :
-                                currentMood === 'trusted' ? 'invert(52%) sepia(98%) saturate(4466%) hue-rotate(269deg) brightness(96%) contrast(106%)' :
-                                currentMood === 'excited' ? 'invert(63%) sepia(99%) saturate(1174%) hue-rotate(15deg) brightness(103%) contrast(107%)' :
-                                'invert(69%) sepia(89%) saturate(6151%) hue-rotate(88deg) brightness(99%) contrast(107%)'
-                            }`
+                        style={{
+                            filter: `brightness(0) saturate(100%) ${currentMood === 'neutral' ? 'invert(47%) sepia(89%) saturate(2718%) hue-rotate(188deg) brightness(99%) contrast(101%)' :
+                                    currentMood === 'angry' ? 'invert(23%) sepia(89%) saturate(6151%) hue-rotate(354deg) brightness(99%) contrast(107%)' :
+                                        currentMood === 'trusted' ? 'invert(52%) sepia(98%) saturate(4466%) hue-rotate(269deg) brightness(96%) contrast(106%)' :
+                                            currentMood === 'excited' ? 'invert(63%) sepia(99%) saturate(1174%) hue-rotate(15deg) brightness(103%) contrast(107%)' :
+                                                'invert(69%) sepia(89%) saturate(6151%) hue-rotate(88deg) brightness(99%) contrast(107%)'
+                                }`
                         }}
                     />
                 </div>
-                
+
                 {/* Messages - Scrollable */}
                 <div className="overflow-y-auto p-4 terminal-scrollbar relative z-10 h-full">
                     {messages.map((message, index) => (
-                    <div
-                        key={message.id}
-                        className="mb-2 transition-all duration-500"
-                    >
-                        <div className="flex items-center gap-2 mb-1">
-                            <span
-                                className="text-xs opacity-60"
-                                style={{ color: currentColors.secondary }}
-                            >
-                                [{message.timestamp?.toLocaleTimeString() || '--:--:--'}]
-                            </span>
-                        </div>
                         <div
-                            className="transition-all duration-500"
-                            style={{
-                                color: message.isUser
-                                    ? currentColors.secondary
-                                    : currentColors.primary
-                            }}
+                            key={message.id}
+                            className="mb-2 transition-all duration-500"
                         >
-                            <span
-                                className="text-xs font-bold"
+                            <div className="flex items-center gap-2 mb-1">
+                                <span
+                                    className="text-xs opacity-60"
+                                    style={{ color: currentColors.secondary }}
+                                >
+                                    [{message.timestamp?.toLocaleTimeString() || '--:--:--'}]
+                                </span>
+                            </div>
+                            <div
+                                className="transition-all duration-500"
                                 style={{
                                     color: message.isUser
                                         ? currentColors.secondary
                                         : currentColors.primary
                                 }}
                             >
-                                {message.isUser ? 'USER' : 'TOMIE'}
-                            </span>
-                            <span className="mx-1">
-                                {'>'}
-                            </span>
-                            <span>
-                                {message.text.split('\\n').map((line, i) => (
-                                    i === 0 ? line : <div key={i} className="ml-12">{line}</div>
-                                ))}
-                                {/* Show typing cursor only for the last AI message while typing */}
-                                {!message.isUser && isTyping && index === messages.length - 1 && (
-                                    <span 
-                                        className="ml-0.5"
-                                        style={{ color: currentColors.primary }}
-                                    >
-                                        █
-                                    </span>
-                                )}
-                            </span>
+                                <span
+                                    className="text-xs font-bold"
+                                    style={{
+                                        color: message.isUser
+                                            ? currentColors.secondary
+                                            : currentColors.primary
+                                    }}
+                                >
+                                    {message.isUser ? 'USER' : 'TOMIE'}
+                                </span>
+                                <span className="mx-1">
+                                    {'>'}
+                                </span>
+                                <span>
+                                    {message.text.split('\\n').map((line, i) => (
+                                        i === 0 ? line : <div key={i} className="ml-12">{line}</div>
+                                    ))}
+                                    {/* Show typing cursor only for the last AI message while typing */}
+                                    {!message.isUser && isTyping && index === messages.length - 1 && (
+                                        <span
+                                            className="ml-0.5"
+                                            style={{ color: currentColors.primary }}
+                                        >
+                                            █
+                                        </span>
+                                    )}
+                                </span>
+                            </div>
                         </div>
-                    </div>
                     ))}
                     <div ref={messagesEndRef} />
                 </div>
@@ -492,7 +498,7 @@ export default function TomieTerminal() {
                         {!isTyping && inputFocused && (
                             <span
                                 className="absolute top-0 pointer-events-none"
-                                style={{ 
+                                style={{
                                     color: currentColors.primary,
                                     left: `${input.length * 0.6}em`
                                 }}
