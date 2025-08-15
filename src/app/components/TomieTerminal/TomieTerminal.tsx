@@ -429,8 +429,11 @@ export default function TomieTerminal() {
                         >
                             <div className="flex items-center gap-2 mb-1">
                                 <span
-                                    className="text-xs opacity-60"
-                                    style={{ color: currentColors.secondary }}
+                                    className="opacity-60"
+                                    style={{ 
+                                        color: currentColors.secondary,
+                                        fontSize: '0.75rem'
+                                    }}
                                 >
                                     [{message.timestamp?.toLocaleTimeString() || '--:--:--'}]
                                 </span>
@@ -440,15 +443,17 @@ export default function TomieTerminal() {
                                 style={{
                                     color: message.isUser
                                         ? currentColors.secondary
-                                        : currentColors.primary
+                                        : currentColors.primary,
+                                    fontSize: '0.875rem'
                                 }}
                             >
                                 <span
-                                    className="text-xs font-bold"
+                                    className="font-bold"
                                     style={{
                                         color: message.isUser
                                             ? currentColors.secondary
-                                            : currentColors.primary
+                                            : currentColors.primary,
+                                        fontSize: '0.75rem'
                                     }}
                                 >
                                     {message.isUser ? 'USER' : 'TOMIE'}
