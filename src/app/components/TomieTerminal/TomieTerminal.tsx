@@ -491,7 +491,10 @@ export default function TomieTerminal() {
                             onBlur={() => setInputFocused(false)}
                             disabled={isTyping}
                             className="w-full bg-transparent border-none outline-none terminal-input caret-transparent"
-                            style={{ color: currentColors.primary }}
+                            style={{ 
+                                color: currentColors.primary,
+                                fontSize: '16px'
+                            }}
                             placeholder={isTyping ? "AI is typing..." : (!inputFocused ? "Enter command..." : "")}
                         />
                         {/* Custom cursor */}
