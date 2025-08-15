@@ -308,6 +308,29 @@ export default function TomieTerminal() {
             setIsInitialized(true);
         }
         inputRef.current?.focus();
+        
+        // Prevent zoom on orientation change
+        const handleOrientationChange = () => {
+            const viewport = document.querySelector('meta[name=viewport]');
+            if (viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no');
+            }
+            // Force zoom reset
+            setTimeout(() => {
+                document.body.style.zoom = '1';
+                if (window.visualViewport) {
+                    window.visualViewport.scale = 1;
+                }
+            }, 100);
+        };
+        
+        window.addEventListener('orientationchange', handleOrientationChange);
+        window.addEventListener('resize', handleOrientationChange);
+        
+        return () => {
+            window.removeEventListener('orientationchange', handleOrientationChange);
+            window.removeEventListener('resize', handleOrientationChange);
+        };
     }, [isInitialized]);
 
     const currentColors = moodColors[currentMood];
