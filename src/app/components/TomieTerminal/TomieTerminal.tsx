@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
+import Image from 'next/image';
 
 type Mood = 'neutral' | 'angry' | 'trusted' | 'excited' | 'confused';
 
@@ -262,9 +263,9 @@ export default function TomieTerminal() {
                 setEyeOpacity(0.15);
                 // Force reflow on mobile
                 requestAnimationFrame(() => {
-                    const eyeElement = document.querySelector('.eye-container');
+                    const eyeElement = document.querySelector('.eye-container') as HTMLElement;
                     if (eyeElement) {
-                        (eyeElement as HTMLElement).style.opacity = '0.15';
+                        eyeElement.style.opacity = '0.15';
                         void eyeElement.offsetHeight; // Force reflow
                     }
                 });
@@ -640,9 +641,11 @@ export default function TomieTerminal() {
                         willChange: 'opacity'
                     }}
                 >
-                    <img
+                    <Image
                         src={moodEyes[currentMood]}
                         alt=""
+                        width={256}
+                        height={256}
                         className="w-64 h-64 object-contain"
                         style={{
                             transition: 'none',
@@ -654,6 +657,8 @@ export default function TomieTerminal() {
                                             'invert(69%) sepia(89%) saturate(6151%) hue-rotate(88deg) brightness(99%) contrast(107%)'
                                 }`
                         }}
+                        priority
+                        unoptimized
                     />
                 </div>
 
