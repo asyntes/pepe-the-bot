@@ -632,11 +632,11 @@ export default function TomieTerminal() {
                         style={{
                             transition: 'none',
                             transform: 'translateZ(0)', // Force hardware acceleration
-                            filter: `${currentMood === 'neutral' ? 'invert(47%) sepia(89%) saturate(2718%) hue-rotate(188deg) brightness(99%) contrast(101%)' :
+                            filter: `${currentMood === 'neutral' ? 'invert(47%) sepia(89%) saturate(800%) hue-rotate(188deg) brightness(99%) contrast(101%)' :
                                 currentMood === 'angry' ? 'invert(23%) sepia(89%) saturate(6151%) hue-rotate(354deg) brightness(99%) contrast(107%)' :
-                                    currentMood === 'trusted' ? 'invert(52%) sepia(98%) saturate(4466%) hue-rotate(269deg) brightness(96%) contrast(106%)' :
+                                    currentMood === 'trusted' ? 'invert(52%) sepia(98%) saturate(1000%) hue-rotate(269deg) brightness(96%) contrast(106%)' :
                                         currentMood === 'excited' ? 'invert(63%) sepia(99%) saturate(1174%) hue-rotate(15deg) brightness(103%) contrast(107%)' :
-                                            'invert(69%) sepia(89%) saturate(6151%) hue-rotate(88deg) brightness(99%) contrast(107%)'
+                                            'invert(69%) sepia(89%) saturate(1200%) hue-rotate(88deg) brightness(99%) contrast(107%)'
                                 }`
                         }}
                         priority
