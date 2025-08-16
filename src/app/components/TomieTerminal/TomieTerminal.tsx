@@ -622,8 +622,11 @@ export default function TomieTerminal() {
             <div className="flex-1 relative" style={{ height: 'calc(100vh - 120px)' }}>
                 {/* Eye Background - Fixed */}
                 <div
-                    className="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-1000 z-0"
-                    style={{ opacity: 0.15 }}
+                    className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
+                    style={{ 
+                        opacity: 0.15,
+                        transition: isGlitching ? 'none' : 'all 1000ms ease'
+                    }}
                 >
                     <img
                         src={moodEyes[currentMood]}
