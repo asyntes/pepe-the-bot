@@ -64,8 +64,7 @@ export const handleCommand = (
             id: (Date.now() + 1).toString(),
             text: 'Opening GitHub repository: https://github.com/asyntes/tomie',
             isUser: false,
-            timestamp: new Date(),
-            mood: 'happy'
+            timestamp: new Date()
         };
 
         setMessages(prev => [...prev, userMessage, repoMessage]);
