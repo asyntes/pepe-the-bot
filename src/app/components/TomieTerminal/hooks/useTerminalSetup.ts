@@ -10,7 +10,7 @@ interface Message {
 }
 
 export const useTerminalSetup = (
-    inputRef: React.RefObject<HTMLInputElement>
+    inputRef: React.RefObject<HTMLInputElement | null>
 ) => {
     const [isInitialized, setIsInitialized] = useState(false);
     const [isSafari, setIsSafari] = useState(false);

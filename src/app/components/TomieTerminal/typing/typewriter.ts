@@ -13,7 +13,7 @@ export const typeMessage = async (
     mood: Mood,
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
     setIsTyping: React.Dispatch<React.SetStateAction<boolean>>,
-    inputRef: React.RefObject<HTMLInputElement>,
+    inputRef: React.RefObject<HTMLInputElement | null>,
     isTouchDevice: boolean
 ) => {
     setIsTyping(true);
