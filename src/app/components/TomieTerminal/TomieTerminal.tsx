@@ -412,6 +412,11 @@ export default function TomieTerminal() {
             animation: glitch-1 0.3s ease-in-out, glitch-2 0.3s ease-in-out, glitch-color 0.3s ease-in-out;
         }
         
+        .glitch-active .eye-container {
+            animation: none !important;
+            opacity: 1 !important;
+        }
+        
         .glitch-text {
             position: relative;
         }
