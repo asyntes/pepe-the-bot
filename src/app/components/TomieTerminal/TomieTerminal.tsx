@@ -20,7 +20,7 @@ export default function TomieTerminal() {
     const [isGlitching, setIsGlitching] = useState(false);
     const [showInterference, setShowInterference] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
-    
+
     const { isInitialized, isSafari, isTouchDevice, messages, setMessages } = useTerminalSetup(inputRef);
     const { messagesEndRef } = useMessageHandling(messages);
 
@@ -127,12 +127,26 @@ export default function TomieTerminal() {
                 }}
             >
                 <div className="flex items-center gap-2">
-                    <span
-                        className="glitch-text"
-                        data-text="TOMIE AI TERMINAL"
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
                         style={{ color: currentColors.secondary }}
                     >
-                        TOMIE AI TERMINAL
+                        <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="2"/>
+                        <path d="M8 21h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <path d="M12 17v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <path d="M7 9l3 3-3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M13 15h3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span
+                        className="glitch-text"
+                        data-text="Tomie AI Terminal"
+                        style={{ color: currentColors.secondary }}
+                    >
+                        Tomie AI Terminal
                     </span>
                 </div>
                 <div

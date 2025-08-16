@@ -22,7 +22,7 @@ export const useTerminalSetup = (
             const initialMessages: Message[] = [
                 {
                     id: '1',
-                    text: 'TOMIE AI TERMINAL v2.0.1 INITIALIZED...',
+                    text: 'Tomie AI Terminal by Asyntes initialized.',
                     isUser: false,
                     timestamp: new Date(),
                     mood: 'neutral'
