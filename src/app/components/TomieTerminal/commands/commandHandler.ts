@@ -17,15 +17,13 @@ export const handleCommand = (
 
     if (lowerCommand === '/clear') {
         setMessages([]);
-        setCurrentMood('neutral');
 
         setTimeout(() => {
             const systemMessage: Message = {
                 id: Date.now().toString(),
                 text: 'Terminal cleared. Memory reset.',
                 isUser: false,
-                timestamp: new Date(),
-                mood: 'neutral'
+                timestamp: new Date()
             };
             setMessages([systemMessage]);
         }, 100);
@@ -42,13 +40,33 @@ export const handleCommand = (
 
         const helpMessage: Message = {
             id: (Date.now() + 1).toString(),
-            text: 'Available commands:\\n/clear - Clear terminal\\n/help - Show this help',
+            text: 'Available commands:\\n/clear - Clear terminal\\n/help - Show this help\\n/repo - Visit GitHub repository',
             isUser: false,
-            timestamp: new Date(),
-            mood: 'neutral'
+            timestamp: new Date()
         };
 
         setMessages(prev => [...prev, userMessage, helpMessage]);
+        return true;
+    }
+
+    if (lowerCommand === '/repo') {
+        const userMessage: Message = {
+            id: Date.now().toString(),
+            text: command,
+            isUser: true,
+            timestamp: new Date()
+        };
+
+        const repoMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            text: 'Opening GitHub repository: https://github.com/asyntes/tomie',
+            isUser: false,
+            timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, userMessage, repoMessage]);
+
+        window.open('https://github.com/asyntes/tomie', '_blank');
         return true;
     }
 
@@ -63,11 +81,9 @@ export const handleCommand = (
         id: (Date.now() + 1).toString(),
         text: `ERROR: Unknown command '${lowerCommand}'. Type /help for available commands.`,
         isUser: false,
-        timestamp: new Date(),
-        mood: 'confused'
+        timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMessage, errorMessage]);
-    setCurrentMood('confused');
     return true;
 };
