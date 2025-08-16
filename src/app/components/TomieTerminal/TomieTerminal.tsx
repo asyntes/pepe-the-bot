@@ -19,6 +19,8 @@ export default function TomieTerminal() {
     const [currentMood, setCurrentMood] = useState<Mood>('neutral');
     const [isTyping, setIsTyping] = useState(false);
     const [inputFocused, setInputFocused] = useState(false);
+    const [isGlitching, setIsGlitching] = useState(false);
+    const [showInterference, setShowInterference] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -58,7 +60,7 @@ export default function TomieTerminal() {
     const moodEyes = {
         neutral: '/svg/normal-eye.svg',
         angry: '/svg/angry-eye.svg',
-        trusted: '/svg/confident-eye.svg',
+        trusted: '/svg/trusted-eye.svg',
         excited: '/svg/excited-eye.svg',
         confused: '/svg/confused-eye.svg'
     };
@@ -247,7 +249,22 @@ export default function TomieTerminal() {
         setMessages(prev => [...prev, userMessage]);
 
         const detectedMood = analyzeMood(input);
-        setCurrentMood(detectedMood);
+
+        // Trigger glitch effect if mood changes
+        if (detectedMood !== currentMood) {
+            setShowInterference(true);
+            setIsGlitching(true);
+
+            setTimeout(() => {
+                setCurrentMood(detectedMood);
+                setTimeout(() => {
+                    setIsGlitching(false);
+                    setTimeout(() => {
+                        setShowInterference(false);
+                    }, 200);
+                }, 300);
+            }, 150);
+        }
 
         const response = generateResponse(input, detectedMood);
 
@@ -301,7 +318,7 @@ export default function TomieTerminal() {
             setIsInitialized(true);
         }
         inputRef.current?.focus();
-        
+
         // Prevent zoom on orientation change
         const handleOrientationChange = () => {
             const viewport = document.querySelector('meta[name=viewport]');
@@ -318,10 +335,10 @@ export default function TomieTerminal() {
                 void document.body.offsetHeight;
             }, 100);
         };
-        
+
         window.addEventListener('orientationchange', handleOrientationChange);
         window.addEventListener('resize', handleOrientationChange);
-        
+
         return () => {
             window.removeEventListener('orientationchange', handleOrientationChange);
             window.removeEventListener('resize', handleOrientationChange);
@@ -365,6 +382,177 @@ export default function TomieTerminal() {
             color: ${currentColors.secondary};
             opacity: 0.4;
         }
+        
+        /* Glitch effect animations */
+        @keyframes glitch-1 {
+            0%, 100% { transform: translateX(0); }
+            10% { transform: translateX(-2px) skewX(-1deg); }
+            20% { transform: translateX(2px) skewX(1deg); }
+            30% { transform: translateX(-1px) skewX(-0.5deg); }
+            40% { transform: translateX(1px) skewX(0.5deg); }
+            50% { transform: translateX(-0.5px); }
+            60% { transform: translateX(0.5px); }
+        }
+        
+        @keyframes glitch-2 {
+            0%, 100% { opacity: 1; filter: brightness(1) contrast(1); }
+            15% { opacity: 0.8; filter: brightness(1.2) contrast(1.5); }
+            25% { opacity: 1; filter: brightness(0.8) contrast(1.3); }
+            35% { opacity: 0.9; filter: brightness(1.1) contrast(1.2); }
+            45% { opacity: 1; filter: brightness(0.9) contrast(1.4); }
+        }
+        
+        @keyframes glitch-color {
+            0%, 100% { filter: hue-rotate(0deg); }
+            20% { filter: hue-rotate(5deg); }
+            40% { filter: hue-rotate(-5deg); }
+            60% { filter: hue-rotate(3deg); }
+            80% { filter: hue-rotate(-3deg); }
+        }
+        
+        .glitch-active {
+            animation: glitch-1 0.3s ease-in-out, glitch-2 0.3s ease-in-out, glitch-color 0.3s ease-in-out;
+        }
+        
+        .glitch-text {
+            position: relative;
+        }
+        
+        .glitch-active .glitch-text::before,
+        .glitch-active .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch-active .glitch-text::before {
+            animation: glitch-1 0.3s ease-in-out;
+            color: ${currentColors.primary};
+            filter: brightness(1.5);
+            z-index: -1;
+        }
+        
+        .glitch-active .glitch-text::after {
+            animation: glitch-2 0.3s ease-in-out;
+            color: ${currentColors.secondary};
+            filter: brightness(0.7);
+            z-index: -2;
+        }
+        
+        /* Interference effect */
+        @keyframes interference {
+            0%, 100% { opacity: 0; }
+            5% { opacity: 0.8; }
+            10% { opacity: 0.2; }
+            15% { opacity: 0.9; }
+            20% { opacity: 0.1; }
+            25% { opacity: 0.7; }
+            30% { opacity: 0.3; }
+            35% { opacity: 0.6; }
+            40% { opacity: 0.4; }
+            45% { opacity: 0.8; }
+            50% { opacity: 0.2; }
+            55% { opacity: 0.9; }
+            60% { opacity: 0.1; }
+            65% { opacity: 0.6; }
+            70% { opacity: 0.4; }
+            75% { opacity: 0.7; }
+            80% { opacity: 0.3; }
+            85% { opacity: 0.8; }
+            90% { opacity: 0.2; }
+            95% { opacity: 0.5; }
+        }
+        
+        @keyframes scanlines {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+        
+        @keyframes noise {
+            0% { transform: translateX(0px); }
+            10% { transform: translateX(-2px); }
+            20% { transform: translateX(2px); }
+            30% { transform: translateX(-1px); }
+            40% { transform: translateX(1px); }
+            50% { transform: translateX(-0.5px); }
+            60% { transform: translateX(0.5px); }
+            70% { transform: translateX(-1px); }
+            80% { transform: translateX(1px); }
+            90% { transform: translateX(-0.5px); }
+            100% { transform: translateX(0px); }
+        }
+        
+        .interference-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1000;
+            background: 
+                linear-gradient(
+                    90deg, 
+                    transparent 0%, 
+                    rgba(${currentMood === 'neutral' ? '0, 170, 255' :
+            currentMood === 'angry' ? '255, 51, 51' :
+                currentMood === 'trusted' ? '170, 85, 255' :
+                    currentMood === 'excited' ? '255, 170, 0' :
+                        '85, 255, 85'}, 0.1) 50%, 
+                    transparent 100%
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 1px,
+                    rgba(${currentMood === 'neutral' ? '0, 170, 255' :
+            currentMood === 'angry' ? '255, 51, 51' :
+                currentMood === 'trusted' ? '170, 85, 255' :
+                    currentMood === 'excited' ? '255, 170, 0' :
+                        '85, 255, 85'}, 0.05) 2px,
+                    transparent 3px
+                );
+            animation: interference 0.6s ease-in-out, noise 0.1s infinite;
+        }
+        
+        .interference-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                ${currentColors.primary}, 
+                transparent
+            );
+            animation: scanlines 0.6s linear infinite;
+        }
+        
+        .interference-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(${currentMood === 'neutral' ? '0, 170, 255' :
+            currentMood === 'angry' ? '255, 51, 51' :
+                currentMood === 'trusted' ? '170, 85, 255' :
+                    currentMood === 'excited' ? '255, 170, 0' :
+                        '85, 255, 85'}, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(${currentMood === 'neutral' ? '0, 170, 255' :
+            currentMood === 'angry' ? '255, 51, 51' :
+                currentMood === 'trusted' ? '170, 85, 255' :
+                    currentMood === 'excited' ? '255, 170, 0' :
+                        '85, 255, 85'}, 0.1) 0%, transparent 50%);
+            mix-blend-mode: screen;
+        }
     `;
 
     // Show loading state until initialized
@@ -384,7 +572,7 @@ export default function TomieTerminal() {
 
     return (
         <div
-            className="w-full h-screen font-mono text-sm transition-all duration-1000"
+            className={`w-full h-screen font-mono text-sm transition-all duration-1000 ${isGlitching ? 'glitch-active' : ''}`}
             style={{
                 backgroundColor: currentColors.bg,
                 color: currentColors.primary
@@ -392,6 +580,11 @@ export default function TomieTerminal() {
         >
             {/* Inject dynamic styles */}
             <style dangerouslySetInnerHTML={{ __html: dynamicStyles }} />
+
+            {/* Interference overlay */}
+            {showInterference && (
+                <div className="interference-overlay" />
+            )}
             {/* Terminal Header */}
             <div
                 className="flex items-center justify-between p-2 border-b transition-all duration-1000"
@@ -401,7 +594,11 @@ export default function TomieTerminal() {
                 }}
             >
                 <div className="flex items-center gap-2">
-                    <span style={{ color: currentColors.secondary }}>
+                    <span
+                        className="glitch-text"
+                        data-text="TOMIE AI TERMINAL"
+                        style={{ color: currentColors.secondary }}
+                    >
                         TOMIE AI TERMINAL
                     </span>
                 </div>
@@ -412,7 +609,12 @@ export default function TomieTerminal() {
                         color: currentColors.secondary
                     }}
                 >
-                    MOOD: {currentMood.toUpperCase()}
+                    <span
+                        className="glitch-text"
+                        data-text={`MOOD: ${currentMood.toUpperCase()}`}
+                    >
+                        MOOD: {currentMood.toUpperCase()}
+                    </span>
                 </div>
             </div>
 
@@ -448,7 +650,7 @@ export default function TomieTerminal() {
                             <div className="flex items-center gap-2 mb-1">
                                 <span
                                     className="opacity-60"
-                                    style={{ 
+                                    style={{
                                         color: currentColors.secondary,
                                         fontSize: '0.75rem'
                                     }}
