@@ -312,14 +312,14 @@ export default function TomieTerminal() {
             setMessages(initialMessages);
             setIsInitialized(true);
         }
-        
+
         const userAgent = navigator.userAgent;
         const isSafariBrowser = /^((?!chrome|android).)*safari/i.test(userAgent);
         const touchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        
+
         setIsSafari(isSafariBrowser);
         setIsTouchDevice(touchDevice);
-        
+
         if (!touchDevice) {
             inputRef.current?.focus();
         }
@@ -719,7 +719,7 @@ export default function TomieTerminal() {
                                 color: currentColors.primary,
                                 fontSize: '0.875rem'
                             }}
-                            placeholder={isTyping ? "AI is typing..." : (!inputFocused ? "Enter command..." : "")}
+                            placeholder={isTyping ? "Tomie is typing..." : (!inputFocused ? "Enter command..." : "")}
                         />
                         {!isTyping && inputFocused && (
                             <span
