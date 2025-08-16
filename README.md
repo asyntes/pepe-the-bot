@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tomie Bot
+
+An interactive AI terminal interface built with Next.js and React, featuring dynamic mood-based responses and a retro terminal aesthetic.
+
+## Features
+
+- **Mood-Based AI Responses**: Tomie analyzes user input and responds with different emotional states
+- **Dynamic Visual Feedback**: Eye expressions and color themes change based on Tomie's current mood
+- **Terminal-Style Interface**: Retro command-line aesthetic with typing animations
+- **Built-in Commands**: System commands for navigation and interaction
+- **Real-time Interaction**: Instant mood analysis and contextual responses
+
+## Mood States
+
+Tomie can express five different emotional states:
+
+- **Neutral** - Default calm state with blue theme
+- **Angry** - Triggered by hostile input with red theme  
+- **Trusted** - Develops when building rapport with purple theme
+- **Excited** - Shows enthusiasm with orange theme
+- **Confused** - Appears when uncertain with green theme
+
+Each mood state features unique:
+- Color schemes and visual styling
+- Eye expressions and animations
+- Response patterns and personality traits
+
+## Available Commands
+
+- `/clear` - Clear terminal and reset memory
+- `/help` - Display available commands
+- `/repo` - Open GitHub repository
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/asyntes/tomie.git
+cd tomie
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Start the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build production application  
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint checks
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Technology Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Next.js 15** - React framework with App Router
+- **React 19** - UI library with modern hooks
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first styling
+- **ESLint** - Code linting and formatting
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT License
