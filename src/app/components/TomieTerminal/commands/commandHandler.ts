@@ -42,13 +42,35 @@ export const handleCommand = (
 
         const helpMessage: Message = {
             id: (Date.now() + 1).toString(),
-            text: 'Available commands:\\n/clear - Clear terminal\\n/help - Show this help',
+            text: 'Available commands:\\n/clear - Clear terminal\\n/help - Show this help\\n/repo - Visit GitHub repository',
             isUser: false,
             timestamp: new Date(),
             mood: 'neutral'
         };
 
         setMessages(prev => [...prev, userMessage, helpMessage]);
+        return true;
+    }
+
+    if (lowerCommand === '/repo') {
+        const userMessage: Message = {
+            id: Date.now().toString(),
+            text: command,
+            isUser: true,
+            timestamp: new Date()
+        };
+
+        const repoMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            text: 'Opening GitHub repository: https://github.com/asyntes/tomie',
+            isUser: false,
+            timestamp: new Date(),
+            mood: 'happy'
+        };
+
+        setMessages(prev => [...prev, userMessage, repoMessage]);
+        
+        window.open('https://github.com/asyntes/tomie', '_blank');
         return true;
     }
 
