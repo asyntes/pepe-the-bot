@@ -23,6 +23,7 @@ export default function TomieTerminal() {
     const [isGlitching, setIsGlitching] = useState(false);
     const [showInterference, setShowInterference] = useState(false);
     const [eyeOpacity, setEyeOpacity] = useState(0.15);
+    const [isSafari, setIsSafari] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -261,14 +262,24 @@ export default function TomieTerminal() {
                 setCurrentMood(detectedMood);
                 // Force immediate opacity reset for new eye with DOM manipulation
                 setEyeOpacity(0.15);
-                // Force reflow on mobile
-                requestAnimationFrame(() => {
-                    const eyeElement = document.querySelector('.eye-container') as HTMLElement;
-                    if (eyeElement) {
-                        eyeElement.style.opacity = '0.15';
-                        void eyeElement.offsetHeight; // Force reflow
-                    }
-                });
+                // Force reflow on mobile, special handling for Safari
+                if (isSafari) {
+                    // Safari needs multiple approaches
+                    setTimeout(() => {
+                        setEyeOpacity(0.14);
+                        setTimeout(() => {
+                            setEyeOpacity(0.15);
+                        }, 10);
+                    }, 10);
+                } else {
+                    requestAnimationFrame(() => {
+                        const eyeElement = document.querySelector('.eye-container') as HTMLElement;
+                        if (eyeElement) {
+                            eyeElement.style.opacity = '0.15';
+                            void eyeElement.offsetHeight; // Force reflow
+                        }
+                    });
+                }
                 setTimeout(() => {
                     setIsGlitching(false);
                     setTimeout(() => {
@@ -736,25 +747,19 @@ export default function TomieTerminal() {
                             onChange={(e) => setInput(e.target.value)}
                             onFocus={(e) => {
                                 setInputFocused(true);
-                                // Prevent zoom on focus
-                                e.preventDefault();
-                                const viewport = document.querySelector('meta[name=viewport]');
-                                if (viewport) {
-                                    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no');
+                                // Safari-specific handling
+                                if (isSafari) {
+                                    e.target.style.fontSize = '16px';
                                 }
-                                setTimeout(() => {
-                                    document.body.style.setProperty('zoom', '1');
-                                    document.documentElement.style.setProperty('zoom', '1');
-                                    document.body.style.transform = 'scale(1)';
-                                    document.documentElement.style.transform = 'scale(1)';
-                                }, 0);
                             }}
-                            onBlur={() => setInputFocused(false)}
-                            onTouchStart={() => {
-                                // Prevent zoom on touch
-                                const viewport = document.querySelector('meta[name=viewport]');
-                                if (viewport) {
-                                    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no');
+                            onBlur={() => {
+                                setInputFocused(false);
+                                // Safari-specific handling
+                                if (isSafari) {
+                                    const input = inputRef.current;
+                                    if (input) {
+                                        input.style.fontSize = '0.875rem';
+                                    }
                                 }
                             }}
                             disabled={isTyping}
