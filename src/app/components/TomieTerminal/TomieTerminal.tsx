@@ -22,7 +22,6 @@ export default function TomieTerminal() {
     const [inputFocused, setInputFocused] = useState(false);
     const [isGlitching, setIsGlitching] = useState(false);
     const [showInterference, setShowInterference] = useState(false);
-    const [eyeOpacity, setEyeOpacity] = useState(0.15);
     const [isSafari, setIsSafari] = useState(false);
     const [isTouchDevice, setIsTouchDevice] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -263,40 +262,6 @@ export default function TomieTerminal() {
 
             setTimeout(() => {
                 setCurrentMood(detectedMood);
-                // Force immediate opacity reset for new eye with DOM manipulation
-                setEyeOpacity(0.15);
-                // Force reflow on mobile, special handling for Safari
-                if (isSafari) {
-                    // Safari needs aggressive opacity reset, especially for green/purple/blue
-                    const isProblematicColor = detectedMood === 'confused' || detectedMood === 'trusted' || detectedMood === 'neutral';
-                    
-                    setTimeout(() => {
-                        setEyeOpacity(0);
-                        requestAnimationFrame(() => {
-                            setEyeOpacity(0.15);
-                            // Force additional reset for problematic colors
-                            if (isProblematicColor) {
-                                setTimeout(() => {
-                                    const eyeElement = document.querySelector('.eye-container') as HTMLElement;
-                                    if (eyeElement) {
-                                        eyeElement.style.setProperty('opacity', '0.15', 'important');
-                                        eyeElement.style.display = 'none';
-                                        void eyeElement.offsetHeight;
-                                        eyeElement.style.display = 'flex';
-                                    }
-                                }, 50);
-                            }
-                        });
-                    }, 20);
-                } else {
-                    requestAnimationFrame(() => {
-                        const eyeElement = document.querySelector('.eye-container') as HTMLElement;
-                        if (eyeElement) {
-                            eyeElement.style.opacity = '0.15';
-                            void eyeElement.offsetHeight; // Force reflow
-                        }
-                    });
-                }
                 setTimeout(() => {
                     setIsGlitching(false);
                     setTimeout(() => {
@@ -678,11 +643,6 @@ export default function TomieTerminal() {
                 {/* Eye Background - Fixed */}
                 <div
                     className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 eye-container"
-                    style={{ 
-                        opacity: eyeOpacity,
-                        transition: 'none',
-                        willChange: 'opacity'
-                    }}
                 >
                     <Image
                         src={moodEyes[currentMood]}
