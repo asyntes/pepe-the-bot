@@ -336,6 +336,11 @@ export default function TomieTerminal() {
             if (viewport) {
                 viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no');
             }
+            
+            if (isSafari && isTouchDevice) {
+                document.documentElement.style.setProperty('--safe-area-inset-top', 'env(safe-area-inset-top)');
+                document.documentElement.style.setProperty('--safe-area-inset-bottom', 'env(safe-area-inset-bottom)');
+            }
             setTimeout(() => {
                 document.body.style.setProperty('zoom', '1');
                 document.documentElement.style.setProperty('zoom', '1');
@@ -584,9 +589,11 @@ export default function TomieTerminal() {
             style={{
                 backgroundColor: currentColors.bg,
                 color: currentColors.primary,
-                height: '-webkit-fill-available',
-                minHeight: '100vh',
-                position: 'relative'
+                height: isSafari && isTouchDevice ? '100vh' : '-webkit-fill-available',
+                minHeight: isSafari && isTouchDevice ? '100vh' : '100vh',
+                position: 'relative',
+                paddingTop: isSafari && isTouchDevice ? 'env(safe-area-inset-top)' : '0',
+                paddingBottom: isSafari && isTouchDevice ? 'env(safe-area-inset-bottom)' : '0'
             }}
         >
             <style dangerouslySetInnerHTML={{ __html: dynamicStyles }} />
@@ -598,7 +605,10 @@ export default function TomieTerminal() {
                 className="flex items-center justify-between p-2 border-b transition-all duration-1000"
                 style={{
                     borderColor: currentColors.border,
-                    backgroundColor: currentColors.bg
+                    backgroundColor: currentColors.bg,
+                    position: 'sticky',
+                    top: isSafari && isTouchDevice ? 'env(safe-area-inset-top)' : '0',
+                    zIndex: 50
                 }}
             >
                 <div className="flex items-center gap-2">
@@ -626,7 +636,11 @@ export default function TomieTerminal() {
                 </div>
             </div>
 
-            <div className="flex-1 relative" style={{ height: 'calc(100vh - 7.5rem)' }}>
+            <div className="flex-1 relative" style={{ 
+                height: isSafari && isTouchDevice 
+                    ? 'calc(100vh - 7.5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom))' 
+                    : 'calc(100vh - 7.5rem)' 
+            }}>
                 <div
                     className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 eye-container"
                 >
