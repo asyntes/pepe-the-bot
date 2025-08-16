@@ -258,8 +258,16 @@ export default function TomieTerminal() {
 
             setTimeout(() => {
                 setCurrentMood(detectedMood);
-                // Force immediate opacity reset for new eye
+                // Force immediate opacity reset for new eye with DOM manipulation
                 setEyeOpacity(0.15);
+                // Force reflow on mobile
+                requestAnimationFrame(() => {
+                    const eyeElement = document.querySelector('.eye-container');
+                    if (eyeElement) {
+                        (eyeElement as HTMLElement).style.opacity = '0.15';
+                        void eyeElement.offsetHeight; // Force reflow
+                    }
+                });
                 setTimeout(() => {
                     setIsGlitching(false);
                     setTimeout(() => {
@@ -625,17 +633,20 @@ export default function TomieTerminal() {
             <div className="flex-1 relative" style={{ height: 'calc(100vh - 120px)' }}>
                 {/* Eye Background - Fixed */}
                 <div
-                    className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
+                    className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 eye-container"
                     style={{ 
                         opacity: eyeOpacity,
-                        transition: 'none'
+                        transition: 'none',
+                        willChange: 'opacity'
                     }}
                 >
                     <img
                         src={moodEyes[currentMood]}
                         alt=""
-                        className="w-64 h-64 object-contain transition-all duration-1000"
+                        className="w-64 h-64 object-contain"
                         style={{
+                            transition: 'none',
+                            transform: 'translateZ(0)', // Force hardware acceleration
                             filter: `brightness(0) saturate(100%) ${currentMood === 'neutral' ? 'invert(47%) sepia(89%) saturate(2718%) hue-rotate(188deg) brightness(99%) contrast(101%)' :
                                 currentMood === 'angry' ? 'invert(23%) sepia(89%) saturate(6151%) hue-rotate(354deg) brightness(99%) contrast(107%)' :
                                     currentMood === 'trusted' ? 'invert(52%) sepia(98%) saturate(4466%) hue-rotate(269deg) brightness(96%) contrast(106%)' :
