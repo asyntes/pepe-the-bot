@@ -28,14 +28,13 @@ html, body {
   overflow: hidden;
   height: 100%;
   width: 100%;
-  font-size: 16px;
+  font-size: 1rem;
   -webkit-text-size-adjust: 100%;
   -moz-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 
-/* Safari mobile specific fixes */
 @supports (-webkit-touch-callout: none) {
   html, body {
     height: 100vh;
@@ -62,7 +61,6 @@ html, body {
   touch-action: manipulation;
 }
 
-/* Safari-specific fixes */
 @supports (-webkit-appearance: none) {
   * {
     -webkit-text-size-adjust: 100% !important;

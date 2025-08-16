@@ -71,27 +71,23 @@ export default function TomieTerminal() {
     const analyzeMood = (text: string): Mood => {
         const lowerText = text.toLowerCase();
 
-        // Angry keywords
         if (lowerText.includes('stupid') || lowerText.includes('idiot') || lowerText.includes('shut up') ||
             lowerText.includes('hate') || lowerText.includes('fuck') || lowerText.includes('damn') ||
             lowerText.includes('annoying') || lowerText.includes('useless')) {
             return 'angry';
         }
 
-        // Trust keywords
         if (lowerText.includes('thank') || lowerText.includes('help') || lowerText.includes('please') ||
             lowerText.includes('good') || lowerText.includes('awesome') || lowerText.includes('amazing') ||
             lowerText.includes('love') || lowerText.includes('friend')) {
             return 'trusted';
         }
 
-        // Excitement keywords
         if (lowerText.includes('!') || lowerText.includes('wow') || lowerText.includes('cool') ||
             lowerText.includes('awesome') || lowerText.includes('incredible') || lowerText.includes('amazing')) {
             return 'excited';
         }
 
-        // Confusion keywords
         if (lowerText.includes('?') || lowerText.includes('what') || lowerText.includes('how') ||
             lowerText.includes('confused') || lowerText.includes('understand') || lowerText.includes('explain')) {
             return 'confused';
@@ -166,7 +162,6 @@ export default function TomieTerminal() {
 
         setIsTyping(false);
 
-        // Refocus input after typing ends (only on desktop)
         if (!isTouchDevice) {
             setTimeout(() => {
                 inputRef.current?.focus();
@@ -178,7 +173,6 @@ export default function TomieTerminal() {
         e.preventDefault();
         if (!input.trim() || isTyping) return;
 
-        // Handle terminal commands
         if (input.startsWith('/')) {
             const command = input.toLowerCase().trim();
 
@@ -187,7 +181,6 @@ export default function TomieTerminal() {
                 setInput('');
                 setCurrentMood('neutral');
 
-                // Add system message after clear
                 setTimeout(() => {
                     const systemMessage: Message = {
                         id: Date.now().toString(),
@@ -222,7 +215,6 @@ export default function TomieTerminal() {
                 return;
             }
 
-            // Unknown command
             const userMessage: Message = {
                 id: Date.now().toString(),
                 text: input,
@@ -255,7 +247,6 @@ export default function TomieTerminal() {
 
         const detectedMood = analyzeMood(input);
 
-        // Trigger glitch effect if mood changes
         if (detectedMood !== currentMood) {
             setShowInterference(true);
             setIsGlitching(true);
@@ -294,7 +285,6 @@ export default function TomieTerminal() {
 
 
     useEffect(() => {
-        // Initialize messages after component mounts to avoid hydration issues
         if (!isInitialized) {
             const initialMessages: Message[] = [
                 {
@@ -323,7 +313,6 @@ export default function TomieTerminal() {
             setIsInitialized(true);
         }
         
-        // Detect Safari and touch devices
         const userAgent = navigator.userAgent;
         const isSafariBrowser = /^((?!chrome|android).)*safari/i.test(userAgent);
         const touchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -331,24 +320,20 @@ export default function TomieTerminal() {
         setIsSafari(isSafariBrowser);
         setIsTouchDevice(touchDevice);
         
-        // Only auto-focus on non-touch devices (desktop)
         if (!touchDevice) {
             inputRef.current?.focus();
         }
 
-        // Prevent zoom on orientation change
         const handleOrientationChange = () => {
             const viewport = document.querySelector('meta[name=viewport]');
             if (viewport) {
                 viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no');
             }
-            // Force zoom reset
             setTimeout(() => {
                 document.body.style.setProperty('zoom', '1');
                 document.documentElement.style.setProperty('zoom', '1');
                 document.body.style.transform = 'scale(1)';
                 document.documentElement.style.transform = 'scale(1)';
-                // Force a reflow to apply changes
                 void document.body.offsetHeight;
             }, 100);
         };
@@ -364,18 +349,17 @@ export default function TomieTerminal() {
 
     const currentColors = moodColors[currentMood];
 
-    // Generate dynamic styles for scrollbar and input
     const dynamicStyles = `
         .terminal-scrollbar::-webkit-scrollbar {
-            width: 12px;
+            width: 0.75rem;
         }
         .terminal-scrollbar::-webkit-scrollbar-track {
             background: ${currentColors.bg};
-            border-left: 1px solid ${currentColors.border};
+            border-left: 0.0625rem solid ${currentColors.border};
         }
         .terminal-scrollbar::-webkit-scrollbar-thumb {
             background: ${currentColors.secondary};
-            border: 2px solid ${currentColors.bg};
+            border: 0.125rem solid ${currentColors.bg};
             border-radius: 0;
         }
         .terminal-scrollbar::-webkit-scrollbar-thumb:hover {
@@ -384,12 +368,10 @@ export default function TomieTerminal() {
         .terminal-scrollbar::-webkit-scrollbar-corner {
             background: ${currentColors.bg};
         }
-        /* Firefox scrollbar */
         .terminal-scrollbar {
             scrollbar-width: thin;
             scrollbar-color: ${currentColors.secondary} ${currentColors.bg};
         }
-        /* Input placeholder with fast transition */
         .terminal-input::placeholder {
             color: ${currentColors.secondary};
             opacity: 0.6;
@@ -400,15 +382,14 @@ export default function TomieTerminal() {
             opacity: 0.4;
         }
         
-        /* Glitch effect animations */
         @keyframes glitch-1 {
             0%, 100% { transform: translateX(0); }
-            10% { transform: translateX(-2px) skewX(-1deg); }
-            20% { transform: translateX(2px) skewX(1deg); }
-            30% { transform: translateX(-1px) skewX(-0.5deg); }
-            40% { transform: translateX(1px) skewX(0.5deg); }
-            50% { transform: translateX(-0.5px); }
-            60% { transform: translateX(0.5px); }
+            10% { transform: translateX(-0.125rem) skewX(-1deg); }
+            20% { transform: translateX(0.125rem) skewX(1deg); }
+            30% { transform: translateX(-0.0625rem) skewX(-0.5deg); }
+            40% { transform: translateX(0.0625rem) skewX(0.5deg); }
+            50% { transform: translateX(-0.03125rem); }
+            60% { transform: translateX(0.03125rem); }
         }
         
         @keyframes glitch-2 {
@@ -459,7 +440,6 @@ export default function TomieTerminal() {
             z-index: -2;
         }
         
-        /* Interference effect */
         @keyframes interference {
             0%, 100% { opacity: 0; }
             5% { opacity: 0.8; }
@@ -489,17 +469,17 @@ export default function TomieTerminal() {
         }
         
         @keyframes noise {
-            0% { transform: translateX(0px); }
-            10% { transform: translateX(-2px); }
-            20% { transform: translateX(2px); }
-            30% { transform: translateX(-1px); }
-            40% { transform: translateX(1px); }
-            50% { transform: translateX(-0.5px); }
-            60% { transform: translateX(0.5px); }
-            70% { transform: translateX(-1px); }
-            80% { transform: translateX(1px); }
+            0% { transform: translateX(0); }
+            10% { transform: translateX(-0.125rem); }
+            20% { transform: translateX(0.125rem); }
+            30% { transform: translateX(-0.0625rem); }
+            40% { transform: translateX(0.0625rem); }
+            50% { transform: translateX(-0.03125rem); }
+            60% { transform: translateX(0.03125rem); }
+            70% { transform: translateX(-0.0625rem); }
+            80% { transform: translateX(0.0625rem); }
             90% { transform: translateX(-0.5px); }
-            100% { transform: translateX(0px); }
+            100% { transform: translateX(0); }
         }
         
         .interference-overlay {
@@ -524,13 +504,13 @@ export default function TomieTerminal() {
                 repeating-linear-gradient(
                     0deg,
                     transparent,
-                    transparent 1px,
+                    transparent 0.0625rem,
                     rgba(${currentMood === 'neutral' ? '0, 170, 255' :
             currentMood === 'angry' ? '255, 51, 51' :
                 currentMood === 'trusted' ? '170, 85, 255' :
                     currentMood === 'excited' ? '255, 170, 0' :
-                        '85, 255, 85'}, 0.05) 2px,
-                    transparent 3px
+                        '85, 255, 85'}, 0.05) 0.125rem,
+                    transparent 0.1875rem
                 );
             animation: interference 0.6s ease-in-out, noise 0.1s infinite;
         }
@@ -541,7 +521,7 @@ export default function TomieTerminal() {
             top: 0;
             left: 0;
             width: 100%;
-            height: 3px;
+            height: 0.1875rem;
             background: linear-gradient(90deg, 
                 transparent, 
                 ${currentColors.primary}, 
@@ -572,7 +552,6 @@ export default function TomieTerminal() {
         }
     `;
 
-    // Show loading state until initialized
     if (!isInitialized) {
         return (
             <div
@@ -598,14 +577,11 @@ export default function TomieTerminal() {
                 position: 'relative'
             }}
         >
-            {/* Inject dynamic styles */}
             <style dangerouslySetInnerHTML={{ __html: dynamicStyles }} />
 
-            {/* Interference overlay */}
             {showInterference && (
                 <div className="interference-overlay" />
             )}
-            {/* Terminal Header */}
             <div
                 className="flex items-center justify-between p-2 border-b transition-all duration-1000"
                 style={{
@@ -638,9 +614,7 @@ export default function TomieTerminal() {
                 </div>
             </div>
 
-            {/* Messages Area Container */}
-            <div className="flex-1 relative" style={{ height: 'calc(100vh - 120px)' }}>
-                {/* Eye Background - Fixed */}
+            <div className="flex-1 relative" style={{ height: 'calc(100vh - 7.5rem)' }}>
                 <div
                     className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 eye-container"
                 >
@@ -665,7 +639,6 @@ export default function TomieTerminal() {
                     />
                 </div>
 
-                {/* Messages - Scrollable */}
                 <div className="overflow-y-auto p-4 terminal-scrollbar relative z-10 h-full">
                     {messages.map((message, index) => (
                         <div
@@ -710,7 +683,6 @@ export default function TomieTerminal() {
                                     {message.text.split('\\n').map((line, i) => (
                                         i === 0 ? line : <div key={i} className="ml-12">{line}</div>
                                     ))}
-                                    {/* Show typing cursor only for the last AI message while typing */}
                                     {!message.isUser && isTyping && index === messages.length - 1 && (
                                         <span
                                             className="ml-0.5"
@@ -727,7 +699,6 @@ export default function TomieTerminal() {
                 </div>
             </div>
 
-            {/* Input Area */}
             <form onSubmit={handleSubmit} className="p-4">
                 <div className="flex items-center gap-2">
                     <span style={{ color: currentColors.secondary }}>{'>'}</span>
@@ -737,22 +708,11 @@ export default function TomieTerminal() {
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            onFocus={(e) => {
+                            onFocus={() => {
                                 setInputFocused(true);
-                                // Safari-specific handling
-                                if (isSafari) {
-                                    e.target.style.fontSize = '16px';
-                                }
                             }}
                             onBlur={() => {
                                 setInputFocused(false);
-                                // Safari-specific handling
-                                if (isSafari) {
-                                    const input = inputRef.current;
-                                    if (input) {
-                                        input.style.fontSize = '0.875rem';
-                                    }
-                                }
                             }}
                             disabled={isTyping}
                             className="w-full bg-transparent border-none outline-none terminal-input caret-transparent"
@@ -762,7 +722,6 @@ export default function TomieTerminal() {
                             }}
                             placeholder={isTyping ? "AI is typing..." : (!inputFocused ? "Enter command..." : "")}
                         />
-                        {/* Custom cursor */}
                         {!isTyping && inputFocused && (
                             <span
                                 className="absolute top-0 pointer-events-none font-mono"
