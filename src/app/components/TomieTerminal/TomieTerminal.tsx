@@ -24,6 +24,7 @@ export default function TomieTerminal() {
     const [showInterference, setShowInterference] = useState(false);
     const [eyeOpacity, setEyeOpacity] = useState(0.15);
     const [isSafari, setIsSafari] = useState(false);
+    const [isTouchDevice, setIsTouchDevice] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -166,10 +167,12 @@ export default function TomieTerminal() {
 
         setIsTyping(false);
 
-        // Refocus input after typing ends
-        setTimeout(() => {
-            inputRef.current?.focus();
-        }, 100);
+        // Refocus input after typing ends (only on desktop)
+        if (!isTouchDevice) {
+            setTimeout(() => {
+                inputRef.current?.focus();
+            }, 100);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -264,13 +267,27 @@ export default function TomieTerminal() {
                 setEyeOpacity(0.15);
                 // Force reflow on mobile, special handling for Safari
                 if (isSafari) {
-                    // Safari needs multiple approaches
+                    // Safari needs aggressive opacity reset, especially for green/purple/blue
+                    const isProblematicColor = detectedMood === 'confused' || detectedMood === 'trusted' || detectedMood === 'neutral';
+                    
                     setTimeout(() => {
-                        setEyeOpacity(0.14);
-                        setTimeout(() => {
+                        setEyeOpacity(0);
+                        requestAnimationFrame(() => {
                             setEyeOpacity(0.15);
-                        }, 10);
-                    }, 10);
+                            // Force additional reset for problematic colors
+                            if (isProblematicColor) {
+                                setTimeout(() => {
+                                    const eyeElement = document.querySelector('.eye-container') as HTMLElement;
+                                    if (eyeElement) {
+                                        eyeElement.style.setProperty('opacity', '0.15', 'important');
+                                        eyeElement.style.display = 'none';
+                                        void eyeElement.offsetHeight;
+                                        eyeElement.style.display = 'flex';
+                                    }
+                                }, 50);
+                            }
+                        });
+                    }, 20);
                 } else {
                     requestAnimationFrame(() => {
                         const eyeElement = document.querySelector('.eye-container') as HTMLElement;
@@ -340,7 +357,19 @@ export default function TomieTerminal() {
             setMessages(initialMessages);
             setIsInitialized(true);
         }
-        inputRef.current?.focus();
+        
+        // Detect Safari and touch devices
+        const userAgent = navigator.userAgent;
+        const isSafariBrowser = /^((?!chrome|android).)*safari/i.test(userAgent);
+        const touchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        setIsSafari(isSafariBrowser);
+        setIsTouchDevice(touchDevice);
+        
+        // Only auto-focus on non-touch devices (desktop)
+        if (!touchDevice) {
+            inputRef.current?.focus();
+        }
 
         // Prevent zoom on orientation change
         const handleOrientationChange = () => {
@@ -595,10 +624,13 @@ export default function TomieTerminal() {
 
     return (
         <div
-            className={`w-full h-screen font-mono text-sm transition-all duration-1000 ${isGlitching ? 'glitch-active' : ''}`}
+            className={`w-full font-mono text-sm transition-all duration-1000 ${isGlitching ? 'glitch-active' : ''}`}
             style={{
                 backgroundColor: currentColors.bg,
-                color: currentColors.primary
+                color: currentColors.primary,
+                height: '-webkit-fill-available',
+                minHeight: '100vh',
+                position: 'relative'
             }}
         >
             {/* Inject dynamic styles */}
