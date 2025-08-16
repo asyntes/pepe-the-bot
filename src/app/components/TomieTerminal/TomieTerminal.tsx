@@ -303,6 +303,13 @@ export default function TomieTerminal() {
                 },
                 {
                     id: '3',
+                    text: 'Type /help to see available commands.',
+                    isUser: false,
+                    timestamp: new Date(),
+                    mood: 'neutral'
+                },
+                {
+                    id: '4',
                     text: 'Hello! I\'m Tomie, your guide to unlocking the mysteries of the universe. Ready to dive into the unknown?',
                     isUser: false,
                     timestamp: new Date(),
@@ -719,7 +726,7 @@ export default function TomieTerminal() {
                                 color: currentColors.primary,
                                 fontSize: '1rem'
                             }}
-                            placeholder={isTyping ? "Tomie is typing..." : (!inputFocused ? "Enter command..." : "")}
+                            placeholder={isTyping ? "Tomie is typing..." : (!inputFocused ? "Ask me anything" : "")}
                         />
                         {!isTyping && inputFocused && (
                             <span
@@ -734,6 +741,18 @@ export default function TomieTerminal() {
                             </span>
                         )}
                     </div>
+                    <button
+                        type="submit"
+                        disabled={isTyping || !input.trim()}
+                        className="px-3 py-1 border transition-all duration-200 hover:bg-opacity-10"
+                        style={{
+                            borderColor: currentColors.border,
+                            color: currentColors.secondary,
+                            backgroundColor: 'transparent'
+                        }}
+                    >
+                        SEND
+                    </button>
                 </div>
                 <div
                     className="mt-2 h-px transition-all duration-1000"
