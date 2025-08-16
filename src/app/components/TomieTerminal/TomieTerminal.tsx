@@ -41,8 +41,8 @@ export default function TomieTerminal() {
             border: '#660000'
         },
         trusted: {
-            primary: '#aa55ff',
-            secondary: '#8833cc',
+            primary: '#8b5cf6',
+            secondary: '#7c3aed',
             bg: '#110011',
             border: '#330066'
         },
@@ -312,14 +312,14 @@ export default function TomieTerminal() {
             setMessages(initialMessages);
             setIsInitialized(true);
         }
-        
+
         const userAgent = navigator.userAgent;
         const isSafariBrowser = /^((?!chrome|android).)*safari/i.test(userAgent);
         const touchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        
+
         setIsSafari(isSafariBrowser);
         setIsTouchDevice(touchDevice);
-        
+
         if (!touchDevice) {
             inputRef.current?.focus();
         }
@@ -501,7 +501,7 @@ export default function TomieTerminal() {
                     transparent 0%, 
                     rgba(${currentMood === 'neutral' ? '0, 170, 255' :
             currentMood === 'angry' ? '255, 51, 51' :
-                currentMood === 'trusted' ? '170, 85, 255' :
+                currentMood === 'trusted' ? '139, 92, 246' :
                     currentMood === 'excited' ? '255, 170, 0' :
                         '85, 255, 85'}, 0.1) 50%, 
                     transparent 100%
@@ -512,7 +512,7 @@ export default function TomieTerminal() {
                     transparent 0.0625rem,
                     rgba(${currentMood === 'neutral' ? '0, 170, 255' :
             currentMood === 'angry' ? '255, 51, 51' :
-                currentMood === 'trusted' ? '170, 85, 255' :
+                currentMood === 'trusted' ? '139, 92, 246' :
                     currentMood === 'excited' ? '255, 170, 0' :
                         '85, 255, 85'}, 0.05) 0.125rem,
                     transparent 0.1875rem
@@ -545,12 +545,12 @@ export default function TomieTerminal() {
             background: 
                 radial-gradient(circle at 20% 80%, rgba(${currentMood === 'neutral' ? '0, 170, 255' :
             currentMood === 'angry' ? '255, 51, 51' :
-                currentMood === 'trusted' ? '170, 85, 255' :
+                currentMood === 'trusted' ? '139, 92, 246' :
                     currentMood === 'excited' ? '255, 170, 0' :
                         '85, 255, 85'}, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(${currentMood === 'neutral' ? '0, 170, 255' :
             currentMood === 'angry' ? '255, 51, 51' :
-                currentMood === 'trusted' ? '170, 85, 255' :
+                currentMood === 'trusted' ? '139, 92, 246' :
                     currentMood === 'excited' ? '255, 170, 0' :
                         '85, 255, 85'}, 0.1) 0%, transparent 50%);
             mix-blend-mode: screen;
@@ -560,7 +560,7 @@ export default function TomieTerminal() {
     if (!isInitialized) {
         return (
             <div
-                className="w-full h-screen font-mono text-sm flex items-center justify-center"
+                className="w-full h-screen font-mono text-base flex items-center justify-center"
                 style={{
                     backgroundColor: currentColors.bg,
                     color: currentColors.primary
@@ -573,7 +573,7 @@ export default function TomieTerminal() {
 
     return (
         <div
-            className={`w-full font-mono text-sm transition-all duration-1000 ${isGlitching ? 'glitch-active' : ''}`}
+            className={`w-full font-mono text-base transition-all duration-1000 ${isGlitching ? 'glitch-active' : ''}`}
             style={{
                 backgroundColor: currentColors.bg,
                 color: currentColors.primary,
@@ -631,13 +631,7 @@ export default function TomieTerminal() {
                         className="w-64 h-64 object-contain"
                         style={{
                             transition: 'none',
-                            transform: 'translateZ(0)', // Force hardware acceleration
-                            filter: `${currentMood === 'neutral' ? 'invert(47%) sepia(89%) saturate(800%) hue-rotate(188deg) brightness(99%) contrast(101%)' :
-                                currentMood === 'angry' ? 'invert(23%) sepia(89%) saturate(6151%) hue-rotate(354deg) brightness(99%) contrast(107%)' :
-                                    currentMood === 'trusted' ? 'invert(52%) sepia(98%) saturate(1000%) hue-rotate(269deg) brightness(96%) contrast(106%)' :
-                                        currentMood === 'excited' ? 'invert(63%) sepia(99%) saturate(1174%) hue-rotate(15deg) brightness(103%) contrast(107%)' :
-                                            'invert(69%) sepia(89%) saturate(1200%) hue-rotate(88deg) brightness(99%) contrast(107%)'
-                                }`
+                            transform: 'translateZ(0)' // Force hardware acceleration
                         }}
                         priority
                         unoptimized
@@ -667,7 +661,7 @@ export default function TomieTerminal() {
                                     color: message.isUser
                                         ? currentColors.secondary
                                         : currentColors.primary,
-                                    fontSize: '0.875rem'
+                                    fontSize: '1rem'
                                 }}
                             >
                                 <span
@@ -723,17 +717,17 @@ export default function TomieTerminal() {
                             className="w-full bg-transparent border-none outline-none terminal-input caret-transparent"
                             style={{
                                 color: currentColors.primary,
-                                fontSize: '0.875rem'
+                                fontSize: '1rem'
                             }}
-                            placeholder={isTyping ? "AI is typing..." : (!inputFocused ? "Enter command..." : "")}
+                            placeholder={isTyping ? "Tomie is typing..." : (!inputFocused ? "Enter command..." : "")}
                         />
                         {!isTyping && inputFocused && (
                             <span
                                 className="absolute top-0 pointer-events-none font-mono"
                                 style={{
                                     color: currentColors.primary,
-                                    fontSize: '0.875rem',
-                                    left: `${input.length * 0.525}rem`
+                                    fontSize: '1rem',
+                                    left: `${input.length * 0.6}rem`
                                 }}
                             >
                                 █
