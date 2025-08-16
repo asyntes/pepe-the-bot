@@ -1,4 +1,4 @@
-# Tomie Bot
+# Tomie
 
 An interactive AI terminal interface built with Next.js and React, featuring dynamic mood-based responses and a retro terminal aesthetic.
 
