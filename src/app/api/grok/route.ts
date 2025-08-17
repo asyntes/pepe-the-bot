@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';  // Importa la SDK OpenAI
 
 type Mood = 'neutral' | 'angry' | 'trusted' | 'excited' | 'confused';
 
@@ -31,9 +30,7 @@ export async function POST(request: NextRequest) {
 
         const { prompt, currentMood } = await request.json();
 
-        const enhancedPrompt = `You are Tomie, an AI character with a terminal interface personality. Respond to the user's message naturally and indicate your emotional interpretation of their input.
-
-IMPORTANT: You must end your response with [MOOD:emotion] where emotion is one of: neutral, angry, trusted, excited, confused.
+        const systemPrompt = `You are Tomie, an AI character with a terminal interface personality. Respond to the user's message naturally and concisely. Provide your response directly in the main content, without using reasoning trace or internal analysis in the output. Analyze the user's input only to determine the mood at the end.
 
 Mood Guidelines:
 - angry: User is insulting, rude, hostile, uses profanity, or is demanding/aggressive
@@ -43,29 +40,50 @@ Mood Guidelines:
 - neutral: Normal conversation, factual questions, casual interaction
 
 Current AI mood state: ${currentMood}
-User input: "${prompt}"
 
-Respond as Tomie with your interpretation and then add the mood tag:`;
+Respond as Tomie with a natural reply, then add [MOOD:emotion] at the very end. Do not include any reasoning in the response.`;
 
-        // Inizializza il client OpenAI con config per xAI
-        const client = new OpenAI({
-            apiKey: apiKey,
-            baseURL: 'https://api.x.ai/v1',
-        });
-
-        const completion = await client.chat.completions.create({
+        const payload = {
             model: 'grok-3-mini',
             messages: [
-                { role: 'system', content: enhancedPrompt },
+                { role: 'system', content: systemPrompt },
                 { role: 'user', content: prompt },
             ],
-            temperature: currentMood === 'excited' ? 0.9 : 0.7,
+            temperature: 0,
             top_p: 0.95,
-            max_tokens: 200,
+            max_tokens: 1024,
             stream: false,
+            reasoning_effort: 'low'  // Impostato a 'low' per minimizzare il reasoning e assicurare che content sia popolato
+        };
+
+        const apiResponse = await fetch('https://api.x.ai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(payload),
         });
 
-        const fullResponse = completion.choices[0].message.content || '';
+        if (!apiResponse.ok) {
+            const errorText = await apiResponse.text();
+            console.error('Grok API Error:', errorText);
+            return NextResponse.json(
+                { error: 'Failed to generate response' },
+                { status: 500 }
+            );
+        }
+
+        const data = await apiResponse.json();
+        console.log('Full Grok API Response:', JSON.stringify(data, null, 2));  // Log completo per debug
+
+        const message = data.choices[0].message;
+        let fullResponse = message.content || '';
+
+        // Rimuovi il fallback a reasoning_content, come richiesto: mostra solo content
+        if (!fullResponse) {
+            fullResponse = 'No response generated.';
+        }
 
         const detectedMood = extractMoodFromResponse(fullResponse);
         const cleanedResponse = cleanResponse(fullResponse);

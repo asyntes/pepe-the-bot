@@ -50,7 +50,7 @@ export const generateFullResponse = async (
     const introResponse = generatePredefinedResponse(currentMood);
 
     try {
-        const response = await fetch('/api/grok', {  // Aggiornato a '/api/grok' per la route rinominata
+        const response = await fetch('/api/grok', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -63,12 +63,12 @@ export const generateFullResponse = async (
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('API Error Details:', errorText);  // Logging per debug
+            console.error('API Error Details:', errorText);
             throw new Error('API call failed');
         }
 
         const data = await response.json();
-        console.log('API Response Data:', data);  // Logging per verificare la response
+        console.log('API Response Data:', data);
 
         return {
             introResponse,
