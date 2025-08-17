@@ -3,18 +3,18 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { moodColors, moodEyes } from './mood/moodConfig';
-import { analyzeMood } from './mood/moodAnalyzer';
-import { generateResponse } from './mood/responseGenerator';
+import { analyzeMoodFromText, updateMoodState, createInitialMoodState } from './mood/moodAnalyzer';
+import { generateFullResponse } from './mood/responseGenerator';
 import { generateDynamicStyles } from './styles/dynamicStyles';
 import { typeMessage } from './typing/typewriter';
 import { handleCommand } from './commands/commandHandler';
 import { useTerminalSetup } from './hooks/useTerminalSetup';
 import { useMessageHandling } from './hooks/useMessageHandling';
-import { Message, Mood } from './types';
+import { Message, Mood, MoodState } from './types';
 
 export default function TomieTerminal() {
     const [input, setInput] = useState('');
-    const [currentMood, setCurrentMood] = useState<Mood>('neutral');
+    const [moodState, setMoodState] = useState<MoodState>(createInitialMoodState());
     const [isTyping, setIsTyping] = useState(false);
     const [inputFocused, setInputFocused] = useState(false);
     const [isGlitching, setIsGlitching] = useState(false);
@@ -30,7 +30,7 @@ export default function TomieTerminal() {
         if (!input.trim() || isTyping) return;
 
         if (input.startsWith('/')) {
-            if (handleCommand(input, setMessages, setCurrentMood)) {
+            if (handleCommand(input, setMessages, (mood: Mood) => setMoodState(createInitialMoodState()))) {
                 setInput('');
                 return;
             }
@@ -45,14 +45,15 @@ export default function TomieTerminal() {
 
         setMessages(prev => [...prev, userMessage]);
 
-        const detectedMood = analyzeMood(input);
-
-        if (detectedMood !== currentMood) {
+        const detectedMoodFromText = analyzeMoodFromText(input);
+        const { newState, shouldChangeMood } = updateMoodState(moodState, detectedMoodFromText);
+        
+        if (shouldChangeMood) {
             setShowInterference(true);
             setIsGlitching(true);
 
             setTimeout(() => {
-                setCurrentMood(detectedMood);
+                setMoodState(newState);
                 setTimeout(() => {
                     setIsGlitching(false);
                     setTimeout(() => {
@@ -60,9 +61,18 @@ export default function TomieTerminal() {
                     }, 200);
                 }, 300);
             }, 150);
+        } else {
+            setMoodState(newState);
         }
 
-        const response = generateResponse(input, detectedMood);
+        const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState.currentMood);
+        
+        const updatedState = updateMoodState(newState, detectedMood);
+        if (updatedState.shouldChangeMood) {
+            setMoodState(updatedState.newState);
+        }
+
+        const fullResponse = `${introResponse}\n\n${aiResponse}`;
 
         const aiMessage: Message = {
             id: (Date.now() + 1).toString(),
@@ -76,13 +86,13 @@ export default function TomieTerminal() {
         setInput('');
 
         await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
-        await typeMessage(response, detectedMood, setMessages, setIsTyping, inputRef, isTouchDevice);
+        await typeMessage(fullResponse, detectedMood, setMessages, setIsTyping, inputRef, isTouchDevice);
     };
 
 
-    const currentColors = moodColors[currentMood];
+    const currentColors = moodColors[moodState.currentMood];
 
-    const dynamicStyles = generateDynamicStyles(currentMood);
+    const dynamicStyles = generateDynamicStyles(moodState.currentMood);
 
     if (!isInitialized) {
         return (
@@ -158,9 +168,9 @@ export default function TomieTerminal() {
                 >
                     <span
                         className="glitch-text"
-                        data-text={`MOOD: ${currentMood.toUpperCase()}`}
+                        data-text={`MOOD: ${moodState.currentMood.toUpperCase()}`}
                     >
-                        MOOD: {currentMood.toUpperCase()}
+                        MOOD: {moodState.currentMood.toUpperCase()}
                     </span>
                 </div>
             </div>
@@ -174,7 +184,7 @@ export default function TomieTerminal() {
                     className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 eye-container"
                 >
                     <Image
-                        src={moodEyes[currentMood]}
+                        src={moodEyes[moodState.currentMood]}
                         alt=""
                         width={256}
                         height={256}
