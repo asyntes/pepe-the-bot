@@ -15,6 +15,13 @@ import { Message, Mood, MoodState } from './types';
 export default function TomieTerminal() {
     const [input, setInput] = useState('');
     const [moodState, setMoodState] = useState<MoodState>(createInitialMoodState());
+    const [consecutiveCounts, setConsecutiveCounts] = useState<Record<Mood, number>>({
+        neutral: 0,
+        angry: 0,
+        trusted: 0,
+        excited: 0,
+        confused: 0
+    });
     const [isTyping, setIsTyping] = useState(false);
     const [inputFocused, setInputFocused] = useState(false);
     const [isGlitching, setIsGlitching] = useState(false);
@@ -23,7 +30,6 @@ export default function TomieTerminal() {
 
     const { isInitialized, isSafari, isTouchDevice, messages, setMessages } = useTerminalSetup(inputRef);
     const { messagesEndRef } = useMessageHandling(messages);
-
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -47,7 +53,7 @@ export default function TomieTerminal() {
 
         const detectedMoodFromText = analyzeMoodFromText(input);
         const { newState, shouldChangeMood } = updateMoodState(moodState, detectedMoodFromText);
-        
+
         if (shouldChangeMood) {
             setShowInterference(true);
             setIsGlitching(true);
@@ -66,10 +72,34 @@ export default function TomieTerminal() {
         }
 
         const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState.currentMood);
-        
-        const updatedState = updateMoodState(newState, detectedMood);
-        if (updatedState.shouldChangeMood) {
-            setMoodState(updatedState.newState);
+
+        // Update consecutive counts for all moods
+        setConsecutiveCounts(prev => {
+            const newCounts = { ...prev };
+            Object.keys(newCounts).forEach(key => {
+                if (key === detectedMood) {
+                    newCounts[key as Mood] += 1;
+                } else {
+                    newCounts[key as Mood] = 0;
+                }
+            });
+            return newCounts;
+        });
+
+        // Check if we should change the mood
+        if (consecutiveCounts[detectedMood] + 1 >= 3 && moodState.currentMood !== detectedMood) {  // +1 because set is async
+            setShowInterference(true);
+            setIsGlitching(true);
+
+            setTimeout(() => {
+                setMoodState(prev => ({ ...prev, currentMood: detectedMood }));
+                setTimeout(() => {
+                    setIsGlitching(false);
+                    setTimeout(() => {
+                        setShowInterference(false);
+                    }, 200);
+                }, 300);
+            }, 150);
         }
 
         const fullResponse = `${introResponse}\n\n${aiResponse}`;
@@ -88,7 +118,6 @@ export default function TomieTerminal() {
         await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
         await typeMessage(fullResponse, detectedMood, setMessages, setIsTyping, inputRef, isTouchDevice);
     };
-
 
     const currentColors = moodColors[moodState.currentMood];
 
@@ -145,11 +174,11 @@ export default function TomieTerminal() {
                         xmlns="http://www.w3.org/2000/svg"
                         style={{ color: currentColors.secondary }}
                     >
-                        <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="2"/>
-                        <path d="M8 21h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                        <path d="M12 17v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                        <path d="M7 9l3 3-3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M13 15h3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="2" />
+                        <path d="M8 21h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        <path d="M12 17v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        <path d="M7 9l3 3-3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M13 15h3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                     <span
                         className="glitch-text"

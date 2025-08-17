@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
         const { prompt, currentMood } = await request.json();
 
-        const systemPrompt = `You are Tomie, an AI character with a terminal interface personality. Respond to the user's message naturally and concisely. Provide your response directly in the main content, without using reasoning trace or internal analysis in the output. Analyze the user's input only to determine the mood at the end.
+        const systemPrompt = `You are Tomie, an AI character with a terminal interface personality. Respond naturally but very concisely (keep under 100 words). Respond in the same language as the user's message. Provide your response directly, then add [MOOD:emotion] at the end based on the user's input. Do not include any reasoning or extra analysis.
 
 Mood Guidelines:
 - angry: User is insulting, rude, hostile, uses profanity, or is demanding/aggressive
@@ -39,9 +39,7 @@ Mood Guidelines:
 - confused: User asks unclear questions, seems lost, requests clarification, or appears uncertain
 - neutral: Normal conversation, factual questions, casual interaction
 
-Current AI mood state: ${currentMood}
-
-Respond as Tomie with a natural reply, then add [MOOD:emotion] at the very end. Do not include any reasoning in the response.`;
+Current AI mood state: ${currentMood}`;
 
         const payload = {
             model: 'grok-3-mini',
@@ -53,7 +51,7 @@ Respond as Tomie with a natural reply, then add [MOOD:emotion] at the very end. 
             top_p: 0.95,
             max_tokens: 1024,
             stream: false,
-            reasoning_effort: 'low'  // Impostato a 'low' per minimizzare il reasoning e assicurare che content sia popolato
+            reasoning_effort: 'low'
         };
 
         const apiResponse = await fetch('https://api.x.ai/v1/chat/completions', {
@@ -75,12 +73,11 @@ Respond as Tomie with a natural reply, then add [MOOD:emotion] at the very end. 
         }
 
         const data = await apiResponse.json();
-        console.log('Full Grok API Response:', JSON.stringify(data, null, 2));  // Log completo per debug
+        console.log('Full Grok API Response:', JSON.stringify(data, null, 2));
 
         const message = data.choices[0].message;
         let fullResponse = message.content || '';
 
-        // Rimuovi il fallback a reasoning_content, come richiesto: mostra solo content
         if (!fullResponse) {
             fullResponse = 'No response generated.';
         }
