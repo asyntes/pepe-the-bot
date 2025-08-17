@@ -73,7 +73,33 @@ export default function TomieTerminal() {
 
         const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState.currentMood);
 
-        // Update consecutive counts for all moods
+        // Add separate message for introResponse (predefined mood response)
+        const introMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            text: '',
+            isUser: false,
+            timestamp: new Date(),
+            mood: moodState.currentMood  // Use current mood for intro
+        };
+
+        setMessages(prev => [...prev, introMessage]);
+        await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+        await typeMessage(introResponse, moodState.currentMood, setMessages, setIsTyping, inputRef, isTouchDevice);
+
+        // Add separate message for aiResponse (Grok-generated response)
+        const grokMessage: Message = {
+            id: (Date.now() + 2).toString(),
+            text: '',
+            isUser: false,
+            timestamp: new Date(),
+            mood: detectedMood  // Use detected mood for Grok response
+        };
+
+        setMessages(prev => [...prev, grokMessage]);
+        await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+        await typeMessage(aiResponse, detectedMood, setMessages, setIsTyping, inputRef, isTouchDevice);
+
+        // Update consecutive counts for all moods after both responses
         setConsecutiveCounts(prev => {
             const newCounts = { ...prev };
             Object.keys(newCounts).forEach(key => {
@@ -102,21 +128,7 @@ export default function TomieTerminal() {
             }, 150);
         }
 
-        const fullResponse = `${introResponse}\n\n${aiResponse}`;
-
-        const aiMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            text: '',
-            isUser: false,
-            timestamp: new Date(),
-            mood: detectedMood
-        };
-
-        setMessages(prev => [...prev, aiMessage]);
         setInput('');
-
-        await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
-        await typeMessage(fullResponse, detectedMood, setMessages, setIsTyping, inputRef, isTouchDevice);
     };
 
     const currentColors = moodColors[moodState.currentMood];
@@ -268,7 +280,7 @@ export default function TomieTerminal() {
                                     {'>'}
                                 </span>
                                 <span>
-                                    {message.text.split('\\n').map((line, i) => (
+                                    {message.text.split('\n').map((line, i) => (
                                         i === 0 ? line : <div key={i} className="ml-12">{line}</div>
                                     ))}
                                     {!message.isUser && isTyping && index === messages.length - 1 && (
