@@ -8,4 +8,15 @@ export interface Message {
     mood?: Mood;
 }
 
+export interface MoodScore {
+    mood: Mood;
+    count: number;
+}
+
+export interface MoodState {
+    currentMood: Mood;
+    scores: Record<Mood, number>;
+    lastDetectedMood: Mood;
+}
+
 export type { Mood };

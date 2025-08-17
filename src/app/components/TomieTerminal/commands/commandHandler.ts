@@ -11,12 +11,13 @@ interface Message {
 export const handleCommand = (
     command: string,
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
-    setCurrentMood: React.Dispatch<React.SetStateAction<Mood>>
+    setCurrentMood: (mood: Mood) => void
 ): boolean => {
     const lowerCommand = command.toLowerCase().trim();
 
     if (lowerCommand === '/clear') {
         setMessages([]);
+        setCurrentMood('neutral');
 
         setTimeout(() => {
             const systemMessage: Message = {

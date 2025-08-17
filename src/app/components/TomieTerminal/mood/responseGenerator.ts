@@ -1,6 +1,6 @@
 import { Mood } from './moodConfig';
 
-const responses = {
+const predefinedResponses = {
     neutral: [
         'Processing request...',
         'Data acknowledged.',
@@ -38,7 +38,49 @@ const responses = {
     ]
 };
 
-export const generateResponse = (userInput: string, mood: Mood): string => {
-    const moodResponses = responses[mood];
+export const generatePredefinedResponse = (mood: Mood): string => {
+    const moodResponses = predefinedResponses[mood];
     return moodResponses[Math.floor(Math.random() * moodResponses.length)];
+};
+
+export const generateFullResponse = async (
+    userInput: string,
+    currentMood: Mood
+): Promise<{ introResponse: string; aiResponse: string; detectedMood: Mood }> => {
+    const introResponse = generatePredefinedResponse(currentMood);
+
+    try {
+        const response = await fetch('/api/grok', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                prompt: userInput,
+                currentMood: currentMood
+            }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API Error Details:', errorText);
+            throw new Error('API call failed');
+        }
+
+        const data = await response.json();
+        console.log('API Response Data:', data);
+
+        return {
+            introResponse,
+            aiResponse: data.response,
+            detectedMood: data.detectedMood
+        };
+    } catch (error) {
+        console.error('Error calling Grok API:', error);
+        return {
+            introResponse,
+            aiResponse: 'Sorry, I encountered an error while processing your request.',
+            detectedMood: currentMood
+        };
+    }
 };
