@@ -44,13 +44,13 @@ export const generatePredefinedResponse = (mood: Mood): string => {
 };
 
 export const generateFullResponse = async (
-    userInput: string, 
+    userInput: string,
     currentMood: Mood
 ): Promise<{ introResponse: string; aiResponse: string; detectedMood: Mood }> => {
     const introResponse = generatePredefinedResponse(currentMood);
-    
+
     try {
-        const response = await fetch('/api/mistral', {
+        const response = await fetch('/api/grok', {  // Aggiornato a '/api/grok' per la route rinominata
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -62,17 +62,21 @@ export const generateFullResponse = async (
         });
 
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API Error Details:', errorText);  // Logging per debug
             throw new Error('API call failed');
         }
 
         const data = await response.json();
+        console.log('API Response Data:', data);  // Logging per verificare la response
+
         return {
             introResponse,
             aiResponse: data.response,
             detectedMood: data.detectedMood
         };
     } catch (error) {
-        console.error('Error calling Mistral API:', error);
+        console.error('Error calling Grok API:', error);
         return {
             introResponse,
             aiResponse: 'Sorry, I encountered an error while processing your request.',

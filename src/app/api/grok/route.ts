@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const HUGGING_FACE_API_KEY = process.env.HUGGING_FACE_API_KEY;
-const MODEL_ENDPOINT = 'https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-3B-Instruct';
+import OpenAI from 'openai';  // Importa la SDK OpenAI
 
 type Mood = 'neutral' | 'angry' | 'trusted' | 'excited' | 'confused';
 
@@ -22,8 +20,9 @@ const cleanResponse = (text: string): string => {
 
 export async function POST(request: NextRequest) {
     try {
-        if (!HUGGING_FACE_API_KEY) {
-            console.error('HUGGING_FACE_API_KEY environment variable is not set');
+        const apiKey = process.env.XAI_API_KEY;
+        if (!apiKey) {
+            console.error('XAI_API_KEY environment variable is not set');
             return NextResponse.json(
                 { error: 'API key not configured' },
                 { status: 500 }
@@ -48,36 +47,25 @@ User input: "${prompt}"
 
 Respond as Tomie with your interpretation and then add the mood tag:`;
 
-        const response = await fetch(MODEL_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${HUGGING_FACE_API_KEY}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                inputs: enhancedPrompt,
-                parameters: {
-                    max_new_tokens: 200,
-                    temperature: currentMood === 'excited' ? 0.9 : 0.7,
-                    top_p: 0.95,
-                    return_full_text: false,
-                }
-            }),
+        // Inizializza il client OpenAI con config per xAI
+        const client = new OpenAI({
+            apiKey: apiKey,
+            baseURL: 'https://api.x.ai/v1',
         });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('HF API Error Details:', {
-                status: response.status,
-                statusText: response.statusText,
-                body: errorText
-            });
-            throw new Error(`Hugging Face API error: ${response.status} - ${errorText}`);
-        }
+        const completion = await client.chat.completions.create({
+            model: 'grok-3-mini',
+            messages: [
+                { role: 'system', content: enhancedPrompt },
+                { role: 'user', content: prompt },
+            ],
+            temperature: currentMood === 'excited' ? 0.9 : 0.7,
+            top_p: 0.95,
+            max_tokens: 200,
+            stream: false,
+        });
 
-        const data = await response.json();
-        console.log('HF API Response:', data);
-        const fullResponse = data[0].generated_text;
+        const fullResponse = completion.choices[0].message.content || '';
 
         const detectedMood = extractMoodFromResponse(fullResponse);
         const cleanedResponse = cleanResponse(fullResponse);
@@ -88,7 +76,7 @@ Respond as Tomie with your interpretation and then add the mood tag:`;
         });
 
     } catch (error) {
-        console.error('Error calling Mistral API:', error);
+        console.error('Error calling Grok API:', error);
         return NextResponse.json(
             { error: 'Failed to generate response' },
             { status: 500 }
