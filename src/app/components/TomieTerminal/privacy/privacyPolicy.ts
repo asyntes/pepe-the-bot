@@ -7,7 +7,7 @@ Data Processing Notice:
 - Data transmission occurs only for real-time response generation
 - No personal information is collected beyond the messages you choose to send
 
-⚠️  IMPORTANT SECURITY NOTICE:
+IMPORTANT SECURITY NOTICE:
 DO NOT share sensitive information such as:
 - Passwords, API keys, or access tokens
 - Personal identification numbers (SSN, ID numbers)
