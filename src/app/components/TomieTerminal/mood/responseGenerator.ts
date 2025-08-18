@@ -50,7 +50,7 @@ export const generateFullResponse = async (
 ): Promise<{ introResponse: string; aiResponse: string; detectedMood: Mood }> => {
     let upcomingMood: Mood | undefined;
     let introResponse = '';
-    
+
     console.log('DEBUG - Current mood:', moodState.currentMood);
     console.log('DEBUG - Current scores:', moodState.scores);
 
@@ -75,18 +75,39 @@ export const generateFullResponse = async (
 
         const data = await response.json();
         console.log('API Response Data:', data);
-        
+
         const detectedMood = data.detectedMood;
         console.log('DEBUG - Detected mood from Grok:', detectedMood);
-        
+
         if (detectedMood !== moodState.currentMood && detectedMood !== 'neutral') {
-            const currentScore = moodState.scores[detectedMood] || 0;
+            const currentScore = moodState.scores[detectedMood as Mood] || 0;
             console.log('DEBUG - Current score for', detectedMood, ':', currentScore);
-            
+
             if (currentScore === 2) {
                 introResponse = generatePredefinedResponse(detectedMood);
                 console.log('DEBUG - Intro response generated:', introResponse);
                 console.log('DEBUG - This will be the 3rd interaction, mood will change to:', detectedMood);
+
+                const secondResponse = await fetch('/api/grok', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: userInput,
+                        currentMood: moodState.currentMood,
+                        upcomingMood: detectedMood
+                    }),
+                });
+
+                if (secondResponse.ok) {
+                    const secondData = await secondResponse.json();
+                    return {
+                        introResponse,
+                        aiResponse: secondData.response,
+                        detectedMood: detectedMood
+                    };
+                }
             }
         }
 
