@@ -9,6 +9,7 @@ An interactive AI terminal interface built with Next.js and React, featuring dyn
 - **Terminal-Style Interface**: Retro command-line aesthetic with typing animations
 - **Built-in Commands**: System commands for navigation and interaction
 - **Real-time Interaction**: Instant mood analysis and contextual responses
+- **Smart Input Management**: Input disabled during processing with visual feedback
 
 ## Mood States
 
@@ -51,12 +52,18 @@ cd tomie
 npm install
 ```
 
-3. Start the development server:
+3. Set up environment variables:
+```bash
+# Create .env.local and add your xAI API key
+XAI_API_KEY=your_xai_api_key_here
+```
+
+4. Start the development server:
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Scripts
 
@@ -71,6 +78,7 @@ npm run dev
 - **React 19** - UI library with modern hooks
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first styling
+- **xAI Grok API** - AI responses powered by Grok-3-Mini
 - **ESLint** - Code linting and formatting
 
 ## License
