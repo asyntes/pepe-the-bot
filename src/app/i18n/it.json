@@ -22,7 +22,7 @@
     "confused": "CONFUSA"
   },
   "commands": {
-    "cleared": "Terminale pulito. Memoria e punteggi umore reimpostati.",
+    "cleared": "Terminale pulito. Memoria resettata.",
     "help": "Comandi disponibili:\n/clear - Pulisce il terminale\n/help - Mostra questo aiuto\n/privacy - Visualizza informativa privacy\n/repo - Visita repository GitHub",
     "repo": "Apertura repository GitHub: https://github.com/asyntes/tomie",
     "unknown": "ERRORE: Comando sconosciuto '{command}'. Digita /help per i comandi disponibili."
