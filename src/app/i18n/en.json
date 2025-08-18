@@ -22,7 +22,7 @@
     "confused": "CONFUSED"
   },
   "commands": {
-    "cleared": "Terminal cleared. Memory and mood scores reset.",
+    "cleared": "Terminal cleared. Memory reset.",
     "help": "Available commands:\n/clear - Clear terminal\n/help - Show this help\n/privacy - View privacy policy\n/repo - Visit GitHub repository",
     "repo": "Opening GitHub repository: https://github.com/asyntes/tomie",
     "unknown": "ERROR: Unknown command '{command}'. Type /help for available commands."
