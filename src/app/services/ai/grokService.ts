@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import { AIRequest, AIResponse, AIMessage, AIServiceConfig } from './types';
 import { MoodDetector } from './moodDetector';
-import { PromptGenerator } from './PromptGenerator';
+import { PromptGenerator } from './promptGenerator';
 
 export class GrokService {
   private openai: OpenAI;
