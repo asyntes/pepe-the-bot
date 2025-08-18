@@ -95,7 +95,7 @@ export default function TomieTerminal() {
 
         setShowLoadingDots(true);
 
-        const conversationMessages = messages.filter(msg => !msg.isSystemGenerated);
+        const conversationMessages = messages.filter(msg => !('isSystemGenerated' in msg && msg.isSystemGenerated));
         
         const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState, conversationMessages);
 

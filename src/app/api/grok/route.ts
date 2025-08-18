@@ -58,7 +58,7 @@ Current AI mood state: ${currentMood} (respond using THIS mood's personality)${u
             baseURL: 'https://api.x.ai/v1',
         });
 
-        const conversationMessages = [];
+        const conversationMessages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [];
         
         conversationMessages.push({ role: 'system', content: systemPrompt });
         
