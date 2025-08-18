@@ -12,18 +12,20 @@ interface Message {
 export const handleCommand = (
     command: string,
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
-    setCurrentMood: (mood: Mood) => void
+    setCurrentMood: () => void,
+    resetConsecutiveCounts: () => void
 ): boolean => {
     const lowerCommand = command.toLowerCase().trim();
 
     if (lowerCommand === '/clear') {
         setMessages([]);
-        setCurrentMood('neutral');
+        setCurrentMood();
+        resetConsecutiveCounts();
 
         setTimeout(() => {
             const systemMessage: Message = {
                 id: Date.now().toString(),
-                text: 'Terminal cleared. Memory reset.',
+                text: 'Terminal cleared. Memory and mood scores reset.',
                 isUser: false,
                 timestamp: new Date()
             };
