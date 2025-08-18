@@ -23,6 +23,7 @@ export default function TomieTerminal() {
         confused: 0
     });
     const [isTyping, setIsTyping] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
     const [inputFocused, setInputFocused] = useState(false);
     const [isGlitching, setIsGlitching] = useState(false);
     const [showInterference, setShowInterference] = useState(false);
@@ -33,11 +34,14 @@ export default function TomieTerminal() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!input.trim() || isTyping) return;
+        if (!input.trim() || isTyping || isProcessing) return;
+
+        setIsProcessing(true);
 
         if (input.startsWith('/')) {
-            if (handleCommand(input, setMessages, (mood: Mood) => setMoodState(createInitialMoodState()))) {
+            if (handleCommand(input, setMessages, () => setMoodState(createInitialMoodState()))) {
                 setInput('');
+                setIsProcessing(false);
                 return;
             }
         }
@@ -50,6 +54,7 @@ export default function TomieTerminal() {
         };
 
         setMessages(prev => [...prev, userMessage]);
+        setInput('');
 
         const detectedMoodFromText = analyzeMoodFromText(input);
         const { newState, shouldChangeMood } = updateMoodState(moodState, detectedMoodFromText);
@@ -128,7 +133,7 @@ export default function TomieTerminal() {
             }, 150);
         }
 
-        setInput('');
+        setIsProcessing(false);
     };
 
     const currentColors = moodColors[moodState.currentMood];
@@ -314,15 +319,15 @@ export default function TomieTerminal() {
                             onBlur={() => {
                                 setInputFocused(false);
                             }}
-                            disabled={isTyping}
+                            disabled={isTyping || isProcessing}
                             className="w-full bg-transparent border-none outline-none terminal-input caret-transparent"
                             style={{
                                 color: currentColors.primary,
                                 fontSize: '1rem'
                             }}
-                            placeholder={isTyping ? "Tomie is typing..." : (!inputFocused ? "Ask me anything" : "")}
+                            placeholder={isProcessing ? "Processing request..." : isTyping ? "Tomie is typing..." : (!inputFocused ? "Ask me anything" : "")}
                         />
-                        {!isTyping && inputFocused && (
+                        {!isTyping && !isProcessing && inputFocused && (
                             <span
                                 className="absolute top-0 pointer-events-none font-mono"
                                 style={{
@@ -337,8 +342,8 @@ export default function TomieTerminal() {
                     </div>
                     <button
                         type="submit"
-                        disabled={isTyping || !input.trim()}
-                        className="px-3 py-1 border transition-all duration-200 hover:bg-opacity-10"
+                        disabled={isTyping || isProcessing || !input.trim()}
+                        className="px-3 py-1 border transition-all duration-200 hover:bg-opacity-10 disabled:opacity-50"
                         style={{
                             borderColor: currentColors.border,
                             color: currentColors.secondary,
