@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import OpenAI from 'openai';
 
 type Mood = 'neutral' | 'angry' | 'trusted' | 'excited' | 'confused';
 
@@ -52,7 +53,12 @@ Mood Detection Guidelines (for the [MOOD:] tag only):
 
 Current AI mood state: ${currentMood} (respond using THIS mood's personality)${upcomingMood ? `\n\nCRITICAL: You are about to transition to ${upcomingMood.toUpperCase()} mood. Completely abandon ${currentMood} personality and respond with full ${upcomingMood.toUpperCase()} characteristics as described above.` : ''}`;
 
-        const payload = {
+        const openai = new OpenAI({
+            apiKey: apiKey,
+            baseURL: 'https://api.x.ai/v1',
+        });
+
+        const completion = await openai.chat.completions.create({
             model: 'grok-3-mini',
             messages: [
                 { role: 'system', content: systemPrompt },
@@ -62,32 +68,12 @@ Current AI mood state: ${currentMood} (respond using THIS mood's personality)${u
             top_p: 0.95,
             max_tokens: 1024,
             stream: false,
-            reasoning_effort: 'low'
-        };
-
-        const apiResponse = await fetch('https://api.x.ai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify(payload),
         });
 
-        if (!apiResponse.ok) {
-            const errorText = await apiResponse.text();
-            console.error('Grok API Error:', errorText);
-            return NextResponse.json(
-                { error: 'Failed to generate response' },
-                { status: 500 }
-            );
-        }
+        console.log('Full Grok API Response:', JSON.stringify(completion, null, 2));
 
-        const data = await apiResponse.json();
-        console.log('Full Grok API Response:', JSON.stringify(data, null, 2));
-
-        const message = data.choices[0].message;
-        let fullResponse = message.content || '';
+        const message = completion.choices[0]?.message;
+        let fullResponse = message?.content || '';
 
         if (!fullResponse) {
             fullResponse = 'No response generated.';

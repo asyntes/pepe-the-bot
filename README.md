@@ -1,6 +1,6 @@
 # Tomie
 
-An interactive AI terminal interface built with Next.js and React, featuring dynamic mood-based responses and a retro terminal aesthetic.
+An interactive AI terminal interface built with Next.js and React, featuring dynamic mood-based responses and a retro terminal aesthetic. Powered by xAI's Grok API through the OpenAI SDK.
 
 ## Features
 
@@ -52,6 +52,8 @@ cd tomie
 npm install
 ```
 
+This includes the OpenAI SDK which is used to interface with xAI's Grok API.
+
 3. Set up environment variables:
 ```bash
 # Create .env.local and add your xAI API key
@@ -78,6 +80,7 @@ npm run dev
 - **React 19** - UI library with modern hooks
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first styling
+- **OpenAI SDK** - Client library for API interactions
 - **xAI Grok API** - AI responses powered by Grok-3-Mini
 - **ESLint** - Code linting and formatting
 
