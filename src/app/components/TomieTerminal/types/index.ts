@@ -6,6 +6,7 @@ export interface Message {
     isUser: boolean;
     timestamp: Date;
     mood?: Mood;
+    isSystemGenerated?: boolean;
 }
 
 export interface MoodScore {

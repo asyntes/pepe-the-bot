@@ -46,7 +46,8 @@ export const generatePredefinedResponse = (mood: Mood): string => {
 
 export const generateFullResponse = async (
     userInput: string,
-    moodState: MoodState
+    moodState: MoodState,
+    messages: { isUser: boolean; text: string }[] = []
 ): Promise<{ introResponse: string; aiResponse: string; detectedMood: Mood }> => {
     let upcomingMood: Mood | undefined;
     let introResponse = '';
@@ -63,7 +64,8 @@ export const generateFullResponse = async (
             body: JSON.stringify({
                 prompt: userInput,
                 currentMood: moodState.currentMood,
-                upcomingMood: upcomingMood
+                upcomingMood: upcomingMood,
+                messages: messages
             }),
         });
 
@@ -96,7 +98,8 @@ export const generateFullResponse = async (
                     body: JSON.stringify({
                         prompt: userInput,
                         currentMood: moodState.currentMood,
-                        upcomingMood: detectedMood
+                        upcomingMood: detectedMood,
+                        messages: messages
                     }),
                 });
 
