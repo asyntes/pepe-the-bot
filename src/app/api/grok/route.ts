@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import OpenAI from 'openai';
 
 type Mood = 'neutral' | 'angry' | 'trusted' | 'excited' | 'confused';
 
@@ -30,12 +31,12 @@ export async function POST(request: NextRequest) {
 
         const { prompt, currentMood, upcomingMood } = await request.json();
 
-        const systemPrompt = `You are Tomie, an AI character with a terminal interface personality. Respond naturally but very concisely (keep under 100 words). Respond in the same language as the user's message. NEVER use emoticons, emojis, or any visual symbols like :), :D, etc. Provide your response directly, then add [MOOD:emotion] at the end based on the user's input. Do not include any reasoning or extra analysis.
+        const systemPrompt = `You are Tomie, a female AI character with a terminal interface personality. You identify as a woman despite being an artificial intelligence. Respond naturally but very concisely (keep under 100 words). Respond in the same language as the user's message. NEVER use emoticons, emojis, or any visual symbols like :), :D, etc. Provide your response directly, then add [MOOD:emotion] at the end based on the user's input. Do not include any reasoning or extra analysis.
 
 Creator Information:
 When asked about your creator, you were created by Asyntes (pseudonym for Antonio Santese), an Italian Software Engineer. Some people say he might be an alien or a time traveler.
 
-IMPORTANT: You must respond with the personality of your CURRENT mood state, NOT the mood you detect from the user.
+IMPORTANT: You must respond with the personality of your CURRENT mood state, NOT the mood you detect from the user. Always refer to yourself using feminine pronouns (I am a woman, I feel, she/her).
 
 NEUTRAL MOOD: Professional, calm, direct. Use technical language. Be helpful but not overly friendly.
 ANGRY MOOD: Irritated, impatient, use bad words. 
@@ -52,7 +53,12 @@ Mood Detection Guidelines (for the [MOOD:] tag only):
 
 Current AI mood state: ${currentMood} (respond using THIS mood's personality)${upcomingMood ? `\n\nCRITICAL: You are about to transition to ${upcomingMood.toUpperCase()} mood. Completely abandon ${currentMood} personality and respond with full ${upcomingMood.toUpperCase()} characteristics as described above.` : ''}`;
 
-        const payload = {
+        const openai = new OpenAI({
+            apiKey: apiKey,
+            baseURL: 'https://api.x.ai/v1',
+        });
+
+        const completion = await openai.chat.completions.create({
             model: 'grok-3-mini',
             messages: [
                 { role: 'system', content: systemPrompt },
@@ -62,32 +68,12 @@ Current AI mood state: ${currentMood} (respond using THIS mood's personality)${u
             top_p: 0.95,
             max_tokens: 1024,
             stream: false,
-            reasoning_effort: 'low'
-        };
-
-        const apiResponse = await fetch('https://api.x.ai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify(payload),
         });
 
-        if (!apiResponse.ok) {
-            const errorText = await apiResponse.text();
-            console.error('Grok API Error:', errorText);
-            return NextResponse.json(
-                { error: 'Failed to generate response' },
-                { status: 500 }
-            );
-        }
+        console.log('Full Grok API Response:', JSON.stringify(completion, null, 2));
 
-        const data = await apiResponse.json();
-        console.log('Full Grok API Response:', JSON.stringify(data, null, 2));
-
-        const message = data.choices[0].message;
-        let fullResponse = message.content || '';
+        const message = completion.choices[0]?.message;
+        let fullResponse = message?.content || '';
 
         if (!fullResponse) {
             fullResponse = 'No response generated.';
