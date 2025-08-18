@@ -1,76 +1,48 @@
 import { Mood } from './moodConfig';
 import { MoodState } from '../types';
 
-export const analyzeMoodFromText = (text: string): Mood => {
-    const lowerText = text.toLowerCase();
 
-    if (lowerText.includes('stupid') || lowerText.includes('idiot') || lowerText.includes('shut up') ||
-        lowerText.includes('hate') || lowerText.includes('fuck') || lowerText.includes('damn') ||
-        lowerText.includes('annoying') || lowerText.includes('useless')) {
-        return 'angry';
-    }
-
-    if (lowerText.includes('thank') || lowerText.includes('help') || lowerText.includes('please') ||
-        lowerText.includes('good') || lowerText.includes('awesome') || lowerText.includes('amazing') ||
-        lowerText.includes('love') || lowerText.includes('friend')) {
-        return 'trusted';
-    }
-
-    if (lowerText.includes('!') || lowerText.includes('wow') || lowerText.includes('cool') ||
-        lowerText.includes('awesome') || lowerText.includes('incredible') || lowerText.includes('amazing')) {
-        return 'excited';
-    }
-
-    if (lowerText.includes('?') || lowerText.includes('what') || lowerText.includes('how') ||
-        lowerText.includes('confused') || lowerText.includes('understand') || lowerText.includes('explain')) {
-        return 'confused';
-    }
-
-    return 'neutral';
-};
-
-export const updateConsecutiveCounts = (
-    consecutiveCounts: Record<Mood, number>,
-    currentMood: Mood,
-    detectedMood: Mood
-): Record<Mood, number> => {
-    const newCounts = { ...consecutiveCounts };
-
-    if (detectedMood === currentMood) {
-        newCounts[detectedMood] += 1;
-        return newCounts;
-    }
-
-    if (currentMood !== 'neutral') {
-        newCounts[currentMood] = Math.max(0, newCounts[currentMood] - 1);
-        return newCounts;
-    }
-
-    if (currentMood === 'neutral' && detectedMood !== 'neutral') {
-        Object.keys(newCounts).forEach(mood => {
-            if (mood !== detectedMood) {
-                newCounts[mood as Mood] = 0;
-            }
-        });
-        newCounts[detectedMood] = 1;
-    }
-
-    return newCounts;
-};
 
 export const updateMoodState = (
     currentState: MoodState,
     detectedMood: Mood
 ): { newState: MoodState; shouldChangeMood: boolean } => {
     const newScores = { ...currentState.scores };
+    let newNonMatchingCount = currentState.nonMatchingCount;
 
-    if (detectedMood === currentState.lastDetectedMood) {
+    if (detectedMood === currentState.currentMood) {
         newScores[detectedMood] += 1;
-    } else {
+        newNonMatchingCount = 0;
         Object.keys(newScores).forEach(mood => {
-            newScores[mood as Mood] = 0;
+            if (mood !== detectedMood) {
+                newScores[mood as Mood] = 0;
+            }
         });
-        newScores[detectedMood] = 1;
+    } else if (currentState.currentMood !== 'neutral') {
+        newNonMatchingCount += 1;
+        
+        if (newNonMatchingCount >= 2) {
+            Object.keys(newScores).forEach(mood => {
+                newScores[mood as Mood] = 0;
+            });
+            const newState: MoodState = {
+                currentMood: 'neutral',
+                scores: newScores,
+                lastDetectedMood: detectedMood,
+                nonMatchingCount: 0
+            };
+            return { newState, shouldChangeMood: true };
+        }
+    } else {
+        newNonMatchingCount = 0;
+        if (detectedMood !== 'neutral') {
+            newScores[detectedMood] += 1;
+            Object.keys(newScores).forEach(mood => {
+                if (mood !== detectedMood) {
+                    newScores[mood as Mood] = 0;
+                }
+            });
+        }
     }
 
     const shouldChangeMood = newScores[detectedMood] >= 3 && detectedMood !== currentState.currentMood;
@@ -78,7 +50,8 @@ export const updateMoodState = (
     const newState: MoodState = {
         currentMood: shouldChangeMood ? detectedMood : currentState.currentMood,
         scores: newScores,
-        lastDetectedMood: detectedMood
+        lastDetectedMood: detectedMood,
+        nonMatchingCount: newNonMatchingCount
     };
 
     return { newState, shouldChangeMood };
@@ -93,5 +66,6 @@ export const createInitialMoodState = (): MoodState => ({
         excited: 0,
         confused: 0
     },
-    lastDetectedMood: 'neutral'
+    lastDetectedMood: 'neutral',
+    nonMatchingCount: 0
 });

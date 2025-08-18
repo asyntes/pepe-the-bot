@@ -1,10 +1,10 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { moodColors, moodEyes } from './mood/moodConfig';
-import { analyzeMoodFromText, updateMoodState, createInitialMoodState, updateConsecutiveCounts } from './mood/moodAnalyzer';
 import { generateFullResponse } from './mood/responseGenerator';
+import { createInitialMoodState, updateMoodState } from './mood/moodAnalyzer';
 import { generateDynamicStyles } from './styles/dynamicStyles';
 import { typeMessage } from './typing/typewriter';
 import { handleCommand } from './commands/commandHandler';
@@ -15,22 +15,57 @@ import { Message, Mood, MoodState } from './types';
 export default function TomieTerminal() {
     const [input, setInput] = useState('');
     const [moodState, setMoodState] = useState<MoodState>(createInitialMoodState());
-    const [consecutiveCounts, setConsecutiveCounts] = useState<Record<Mood, number>>({
-        neutral: 0,
-        angry: 0,
-        trusted: 0,
-        excited: 0,
-        confused: 0
-    });
     const [isTyping, setIsTyping] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [inputFocused, setInputFocused] = useState(false);
     const [isGlitching, setIsGlitching] = useState(false);
     const [showInterference, setShowInterference] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
+    const [cursorPosition, setCursorPosition] = useState(0);
 
     const { isInitialized, isSafari, isTouchDevice, messages, setMessages } = useTerminalSetup(inputRef);
     const { messagesEndRef } = useMessageHandling(messages);
+
+    const updateCursorPosition = useCallback(() => {
+        if (inputRef.current) {
+            const tempSpan = document.createElement('span');
+            tempSpan.style.font = window.getComputedStyle(inputRef.current).font;
+            tempSpan.style.visibility = 'hidden';
+            tempSpan.style.position = 'absolute';
+            tempSpan.style.whiteSpace = 'pre';
+            tempSpan.textContent = input;
+
+            document.body.appendChild(tempSpan);
+            const textWidth = tempSpan.offsetWidth;
+            document.body.removeChild(tempSpan);
+
+            const scrollLeft = inputRef.current.scrollLeft;
+            const inputWidth = inputRef.current.offsetWidth;
+
+            let cursorPos = textWidth - scrollLeft;
+
+            cursorPos = Math.max(0, Math.min(cursorPos, inputWidth - 10));
+
+            setCursorPosition(cursorPos);
+        }
+    }, [input]);
+
+    useEffect(() => {
+        if (!isTouchDevice && inputFocused) {
+            updateCursorPosition();
+        }
+    }, [input, inputFocused, isTouchDevice, updateCursorPosition]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (inputFocused && !isTouchDevice) {
+                updateCursorPosition();
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [inputFocused, isTouchDevice, updateCursorPosition]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,13 +74,7 @@ export default function TomieTerminal() {
         setIsProcessing(true);
 
         if (input.startsWith('/')) {
-            if (handleCommand(input, setMessages, () => setMoodState(createInitialMoodState()), () => setConsecutiveCounts({
-                neutral: 0,
-                angry: 0,
-                trusted: 0,
-                excited: 0,
-                confused: 0
-            }))) {
+            if (handleCommand(input, setMessages, () => setMoodState(createInitialMoodState()))) {
                 setInput('');
                 setIsProcessing(false);
                 return;
@@ -62,8 +91,39 @@ export default function TomieTerminal() {
         setMessages(prev => [...prev, userMessage]);
         setInput('');
 
-        const detectedMoodFromText = analyzeMoodFromText(input);
-        const { newState, shouldChangeMood } = updateMoodState(moodState, detectedMoodFromText);
+
+        const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState);
+
+        console.log('DEBUG - Intro response received:', introResponse);
+        console.log('DEBUG - Will show intro?', !!introResponse);
+
+        if (introResponse) {
+            const introMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                text: '',
+                isUser: false,
+                timestamp: new Date(),
+                mood: moodState.currentMood
+            };
+
+            setMessages(prev => [...prev, introMessage]);
+            await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+            await typeMessage(introResponse, moodState.currentMood, setMessages, setIsTyping, inputRef, isTouchDevice);
+        }
+
+        const grokMessage: Message = {
+            id: (Date.now() + 2).toString(),
+            text: '',
+            isUser: false,
+            timestamp: new Date(),
+            mood: detectedMood
+        };
+
+        setMessages(prev => [...prev, grokMessage]);
+        await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+        await typeMessage(aiResponse, detectedMood, setMessages, setIsTyping, inputRef, isTouchDevice);
+
+        const { newState, shouldChangeMood } = updateMoodState(moodState, detectedMood);
 
         if (shouldChangeMood) {
             setShowInterference(true);
@@ -82,49 +142,6 @@ export default function TomieTerminal() {
             setMoodState(newState);
         }
 
-        const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState.currentMood);
-
-        const introMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            text: '',
-            isUser: false,
-            timestamp: new Date(),
-            mood: moodState.currentMood
-        };
-
-        setMessages(prev => [...prev, introMessage]);
-        await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
-        await typeMessage(introResponse, moodState.currentMood, setMessages, setIsTyping, inputRef, isTouchDevice);
-
-        const grokMessage: Message = {
-            id: (Date.now() + 2).toString(),
-            text: '',
-            isUser: false,
-            timestamp: new Date(),
-            mood: detectedMood
-        };
-
-        setMessages(prev => [...prev, grokMessage]);
-        await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
-        await typeMessage(aiResponse, detectedMood, setMessages, setIsTyping, inputRef, isTouchDevice);
-
-        const newConsecutiveCounts = updateConsecutiveCounts(consecutiveCounts, moodState.currentMood, detectedMood);
-        setConsecutiveCounts(newConsecutiveCounts);
-
-        if (newConsecutiveCounts[detectedMood] >= 3 && moodState.currentMood !== detectedMood) {
-            setShowInterference(true);
-            setIsGlitching(true);
-
-            setTimeout(() => {
-                setMoodState(prev => ({ ...prev, currentMood: detectedMood }));
-                setTimeout(() => {
-                    setIsGlitching(false);
-                    setTimeout(() => {
-                        setShowInterference(false);
-                    }, 200);
-                }, 300);
-            }, 150);
-        }
 
         setIsProcessing(false);
     };
@@ -305,28 +322,36 @@ export default function TomieTerminal() {
                             ref={inputRef}
                             type="text"
                             value={input}
-                            onChange={(e) => setInput(e.target.value)}
+                            onChange={(e) => {
+                                setInput(e.target.value);
+                            }}
+                            onScroll={() => {
+                                if (inputFocused) {
+                                    updateCursorPosition();
+                                }
+                            }}
                             onFocus={() => {
                                 setInputFocused(true);
+                                updateCursorPosition();
                             }}
                             onBlur={() => {
                                 setInputFocused(false);
                             }}
                             disabled={isTyping || isProcessing}
-                            className="w-full bg-transparent border-none outline-none terminal-input caret-transparent"
+                            className={`w-full bg-transparent border-none outline-none terminal-input ${isTouchDevice ? '' : 'caret-transparent'}`}
                             style={{
                                 color: currentColors.primary,
                                 fontSize: '1rem'
                             }}
                             placeholder={isProcessing ? "Processing request..." : isTyping ? "Tomie is typing..." : (!inputFocused ? "Ask me anything" : "")}
                         />
-                        {!isTyping && !isProcessing && inputFocused && (
+                        {!isTyping && !isProcessing && inputFocused && !isTouchDevice && (
                             <span
                                 className="absolute top-0 pointer-events-none font-mono"
                                 style={{
                                     color: currentColors.primary,
                                     fontSize: '1rem',
-                                    left: `${input.length * 0.6}rem`
+                                    left: `${cursorPosition}px`
                                 }}
                             >
                                 █

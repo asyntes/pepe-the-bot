@@ -48,6 +48,17 @@ export const generateDynamicStyles = (currentMood: Mood): string => {
             color: ${currentColors.secondary};
             opacity: 0.4;
         }
+        .terminal-input {
+            caret-color: ${currentColors.primary};
+        }
+        .terminal-input:focus {
+            caret-color: ${currentColors.primary};
+        }
+        @media (pointer: coarse) {
+            .terminal-input {
+                caret-color: ${currentColors.primary} !important;
+            }
+        }
         
         @keyframes glitch-1 {
             0%, 100% { transform: translateX(0); }

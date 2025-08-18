@@ -1,4 +1,5 @@
 import { Mood } from './moodConfig';
+import { MoodState } from '../types';
 
 const predefinedResponses = {
     neutral: [
@@ -45,9 +46,13 @@ export const generatePredefinedResponse = (mood: Mood): string => {
 
 export const generateFullResponse = async (
     userInput: string,
-    currentMood: Mood
+    moodState: MoodState
 ): Promise<{ introResponse: string; aiResponse: string; detectedMood: Mood }> => {
-    const introResponse = generatePredefinedResponse(currentMood);
+    let upcomingMood: Mood | undefined;
+    let introResponse = '';
+
+    console.log('DEBUG - Current mood:', moodState.currentMood);
+    console.log('DEBUG - Current scores:', moodState.scores);
 
     try {
         const response = await fetch('/api/grok', {
@@ -57,7 +62,8 @@ export const generateFullResponse = async (
             },
             body: JSON.stringify({
                 prompt: userInput,
-                currentMood: currentMood
+                currentMood: moodState.currentMood,
+                upcomingMood: upcomingMood
             }),
         });
 
@@ -70,17 +76,52 @@ export const generateFullResponse = async (
         const data = await response.json();
         console.log('API Response Data:', data);
 
+        const detectedMood = data.detectedMood;
+        console.log('DEBUG - Detected mood from Grok:', detectedMood);
+
+        if (detectedMood !== moodState.currentMood && detectedMood !== 'neutral') {
+            const currentScore = moodState.scores[detectedMood as Mood] || 0;
+            console.log('DEBUG - Current score for', detectedMood, ':', currentScore);
+
+            if (currentScore === 2) {
+                introResponse = generatePredefinedResponse(detectedMood);
+                console.log('DEBUG - Intro response generated:', introResponse);
+                console.log('DEBUG - This will be the 3rd interaction, mood will change to:', detectedMood);
+
+                const secondResponse = await fetch('/api/grok', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: userInput,
+                        currentMood: moodState.currentMood,
+                        upcomingMood: detectedMood
+                    }),
+                });
+
+                if (secondResponse.ok) {
+                    const secondData = await secondResponse.json();
+                    return {
+                        introResponse,
+                        aiResponse: secondData.response,
+                        detectedMood: detectedMood
+                    };
+                }
+            }
+        }
+
         return {
             introResponse,
             aiResponse: data.response,
-            detectedMood: data.detectedMood
+            detectedMood: detectedMood
         };
     } catch (error) {
         console.error('Error calling Grok API:', error);
         return {
             introResponse,
             aiResponse: 'Sorry, I encountered an error while processing your request.',
-            detectedMood: currentMood
+            detectedMood: moodState.currentMood
         };
     }
 };
