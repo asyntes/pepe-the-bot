@@ -8,33 +8,12 @@ export const updateMoodState = (
     detectedMood: Mood
 ): { newState: MoodState; shouldChangeMood: boolean } => {
     const newScores = { ...currentState.scores };
-    let newNonMatchingCount = currentState.nonMatchingCount;
 
-    if (detectedMood === currentState.currentMood) {
-        newScores[detectedMood] += 1;
-        newNonMatchingCount = 0;
-        Object.keys(newScores).forEach(mood => {
-            if (mood !== detectedMood) {
-                newScores[mood as Mood] = 0;
-            }
-        });
-    } else if (currentState.currentMood !== 'neutral') {
-        newNonMatchingCount += 1;
-        
-        if (newNonMatchingCount >= 2) {
-            Object.keys(newScores).forEach(mood => {
-                newScores[mood as Mood] = 0;
-            });
-            const newState: MoodState = {
-                currentMood: 'neutral',
-                scores: newScores,
-                lastDetectedMood: detectedMood,
-                nonMatchingCount: 0
-            };
-            return { newState, shouldChangeMood: true };
-        }
-    } else {
-        newNonMatchingCount = 0;
+    console.log('DEBUG - Current mood:', currentState.currentMood);
+    console.log('DEBUG - Detected mood:', detectedMood);
+    console.log('DEBUG - Current scores before:', currentState.scores);
+
+    if (currentState.currentMood === 'neutral') {
         if (detectedMood !== 'neutral') {
             newScores[detectedMood] += 1;
             Object.keys(newScores).forEach(mood => {
@@ -43,15 +22,41 @@ export const updateMoodState = (
                 }
             });
         }
+    } else {
+        if (detectedMood === currentState.currentMood) {
+            newScores[detectedMood] += 1;
+            console.log('DEBUG - Incrementing current mood score to:', newScores[detectedMood]);
+        } else {
+            newScores['neutral'] += 1;
+            console.log('DEBUG - Incrementing neutral score to:', newScores['neutral']);
+            Object.keys(newScores).forEach(mood => {
+                if (mood !== 'neutral') {
+                    newScores[mood as Mood] = 0;
+                }
+            });
+        }
     }
 
-    const shouldChangeMood = newScores[detectedMood] >= 2 && detectedMood !== currentState.currentMood;
+    console.log('DEBUG - New scores after:', newScores);
+
+    const shouldChangeMood = (
+        (currentState.currentMood === 'neutral' && detectedMood !== 'neutral' && newScores[detectedMood] >= 2) ||
+        (currentState.currentMood !== 'neutral' && newScores['neutral'] >= 2)
+    );
+
+    console.log('DEBUG - Should change mood:', shouldChangeMood);
+
+    const newMood = shouldChangeMood ? 
+        (currentState.currentMood === 'neutral' ? detectedMood : 'neutral') : 
+        currentState.currentMood;
+
+    console.log('DEBUG - New mood will be:', newMood);
 
     const newState: MoodState = {
-        currentMood: shouldChangeMood ? detectedMood : currentState.currentMood,
+        currentMood: newMood,
         scores: newScores,
         lastDetectedMood: detectedMood,
-        nonMatchingCount: newNonMatchingCount
+        nonMatchingCount: 0
     };
 
     return { newState, shouldChangeMood };
