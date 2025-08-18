@@ -1,4 +1,5 @@
 import { Mood } from '../mood/moodConfig';
+import { privacyPolicyText } from '../privacy/privacyPolicy';
 
 interface Message {
     id: string;
@@ -41,7 +42,7 @@ export const handleCommand = (
 
         const helpMessage: Message = {
             id: (Date.now() + 1).toString(),
-            text: 'Available commands:\\n/clear - Clear terminal\\n/help - Show this help\\n/repo - Visit GitHub repository',
+            text: 'Available commands:\\n/clear - Clear terminal\\n/help - Show this help\\n/repo - Visit GitHub repository\\n/privacy - View privacy policy',
             isUser: false,
             timestamp: new Date()
         };
@@ -68,6 +69,25 @@ export const handleCommand = (
         setMessages(prev => [...prev, userMessage, repoMessage]);
 
         window.open('https://github.com/asyntes/tomie', '_blank');
+        return true;
+    }
+
+    if (lowerCommand === '/privacy') {
+        const userMessage: Message = {
+            id: Date.now().toString(),
+            text: command,
+            isUser: true,
+            timestamp: new Date()
+        };
+
+        const privacyMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            text: privacyPolicyText,
+            isUser: false,
+            timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, userMessage, privacyMessage]);
         return true;
     }
 

@@ -43,6 +43,13 @@ export const useTerminalSetup = (
                 },
                 {
                     id: '4',
+                    text: 'Privacy Notice: Type /privacy for details.',
+                    isUser: false,
+                    timestamp: new Date(),
+                    mood: 'neutral'
+                },
+                {
+                    id: '5',
                     text: 'Hello! I\'m Tomie, your guide to unlocking the mysteries of the universe. Ready to dive into the unknown?',
                     isUser: false,
                     timestamp: new Date(),
