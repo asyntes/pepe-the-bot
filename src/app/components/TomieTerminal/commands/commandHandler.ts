@@ -12,15 +12,13 @@ interface Message {
 export const handleCommand = (
     command: string,
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
-    setCurrentMood: () => void,
-    resetConsecutiveCounts: () => void
+    setCurrentMood: () => void
 ): boolean => {
     const lowerCommand = command.toLowerCase().trim();
 
     if (lowerCommand === '/clear') {
         setMessages([]);
         setCurrentMood();
-        resetConsecutiveCounts();
 
         setTimeout(() => {
             const systemMessage: Message = {

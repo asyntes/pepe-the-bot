@@ -17,6 +17,7 @@ export interface MoodState {
     currentMood: Mood;
     scores: Record<Mood, number>;
     lastDetectedMood: Mood;
+    nonMatchingCount: number;
 }
 
 export type { Mood };

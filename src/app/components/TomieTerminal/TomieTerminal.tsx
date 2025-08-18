@@ -15,13 +15,6 @@ import { Message, Mood, MoodState } from './types';
 export default function TomieTerminal() {
     const [input, setInput] = useState('');
     const [moodState, setMoodState] = useState<MoodState>(createInitialMoodState());
-    const [consecutiveCounts, setConsecutiveCounts] = useState<Record<Mood, number>>({
-        neutral: 0,
-        angry: 0,
-        trusted: 0,
-        excited: 0,
-        confused: 0
-    });
     const [isTyping, setIsTyping] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [inputFocused, setInputFocused] = useState(false);
@@ -81,13 +74,7 @@ export default function TomieTerminal() {
         setIsProcessing(true);
 
         if (input.startsWith('/')) {
-            if (handleCommand(input, setMessages, () => setMoodState(createInitialMoodState()), () => setConsecutiveCounts({
-                neutral: 0,
-                angry: 0,
-                trusted: 0,
-                excited: 0,
-                confused: 0
-            }))) {
+            if (handleCommand(input, setMessages, () => setMoodState(createInitialMoodState()))) {
                 setInput('');
                 setIsProcessing(false);
                 return;
@@ -105,19 +92,24 @@ export default function TomieTerminal() {
         setInput('');
 
 
-        const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState.currentMood);
+        const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState);
 
-        const introMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            text: '',
-            isUser: false,
-            timestamp: new Date(),
-            mood: moodState.currentMood
-        };
+        console.log('DEBUG - Intro response received:', introResponse);
+        console.log('DEBUG - Will show intro?', !!introResponse);
 
-        setMessages(prev => [...prev, introMessage]);
-        await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
-        await typeMessage(introResponse, moodState.currentMood, setMessages, setIsTyping, inputRef, isTouchDevice);
+        if (introResponse) {
+            const introMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                text: '',
+                isUser: false,
+                timestamp: new Date(),
+                mood: moodState.currentMood
+            };
+
+            setMessages(prev => [...prev, introMessage]);
+            await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+            await typeMessage(introResponse, moodState.currentMood, setMessages, setIsTyping, inputRef, isTouchDevice);
+        }
 
         const grokMessage: Message = {
             id: (Date.now() + 2).toString(),
@@ -150,42 +142,6 @@ export default function TomieTerminal() {
             setMoodState(newState);
         }
 
-        setConsecutiveCounts(prev => {
-            const newCounts = { ...prev };
-
-            if (moodState.currentMood !== 'neutral' && detectedMood !== moodState.currentMood) {
-                newCounts[moodState.currentMood] = Math.max(0, newCounts[moodState.currentMood] - 1);
-                return newCounts;
-            }
-
-            Object.keys(newCounts).forEach(key => {
-                if (key === detectedMood) {
-                    newCounts[key as Mood] += 1;
-                } else {
-                    newCounts[key as Mood] = 0;
-                }
-            });
-            return newCounts;
-        });
-
-        const updatedCounts = moodState.currentMood !== 'neutral' && detectedMood !== moodState.currentMood
-            ? { ...consecutiveCounts, [moodState.currentMood]: Math.max(0, consecutiveCounts[moodState.currentMood] - 1) }
-            : { ...consecutiveCounts, [detectedMood]: consecutiveCounts[detectedMood] + 1 };
-
-        if (updatedCounts[detectedMood] >= 3 && moodState.currentMood !== detectedMood) {
-            setShowInterference(true);
-            setIsGlitching(true);
-
-            setTimeout(() => {
-                setMoodState(prev => ({ ...prev, currentMood: detectedMood }));
-                setTimeout(() => {
-                    setIsGlitching(false);
-                    setTimeout(() => {
-                        setShowInterference(false);
-                    }, 200);
-                }, 300);
-            }, 150);
-        }
 
         setIsProcessing(false);
     };
