@@ -10,6 +10,7 @@ import { typeMessage } from './typing/typewriter';
 import { handleCommand } from './commands/commandHandler';
 import { useTerminalSetup } from './hooks/useTerminalSetup';
 import { useMessageHandling } from './hooks/useMessageHandling';
+import { LoadingDots } from './components/LoadingDots';
 import { Message, Mood, MoodState } from './types';
 
 export default function TomieTerminal() {
@@ -20,6 +21,7 @@ export default function TomieTerminal() {
     const [inputFocused, setInputFocused] = useState(false);
     const [isGlitching, setIsGlitching] = useState(false);
     const [showInterference, setShowInterference] = useState(false);
+    const [showLoadingDots, setShowLoadingDots] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const [cursorPosition, setCursorPosition] = useState(0);
 
@@ -91,11 +93,14 @@ export default function TomieTerminal() {
         setMessages(prev => [...prev, userMessage]);
         setInput('');
 
+        setShowLoadingDots(true);
 
         const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState);
 
         console.log('DEBUG - Intro response received:', introResponse);
         console.log('DEBUG - Will show intro?', !!introResponse);
+
+        setShowLoadingDots(false);
 
         if (introResponse) {
             const introMessage: Message = {
@@ -295,21 +300,76 @@ export default function TomieTerminal() {
                                     {'>'}
                                 </span>
                                 <span>
-                                    {message.text.split('\n').map((line, i) => (
-                                        i === 0 ? line : <div key={i} className="ml-12">{line}</div>
-                                    ))}
-                                    {!message.isUser && isTyping && index === messages.length - 1 && (
-                                        <span
-                                            className="ml-0.5"
-                                            style={{ color: currentColors.primary }}
-                                        >
-                                            █
-                                        </span>
-                                    )}
+                                    {message.text.split('\n').map((line, i) => {
+                                        const isLastLine = i === message.text.split('\n').length - 1;
+                                        const showCursor = !message.isUser && isTyping && index === messages.length - 1 && isLastLine;
+                                        
+                                        return i === 0 ? (
+                                            <span key={i}>
+                                                {line}
+                                                {showCursor && (
+                                                    <span
+                                                        className="ml-0.5"
+                                                        style={{ color: currentColors.primary }}
+                                                    >
+                                                        █
+                                                    </span>
+                                                )}
+                                            </span>
+                                        ) : (
+                                            <div key={i} className="ml-12">
+                                                {line}
+                                                {showCursor && (
+                                                    <span
+                                                        className="ml-0.5"
+                                                        style={{ color: currentColors.primary }}
+                                                    >
+                                                        █
+                                                    </span>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
                                 </span>
                             </div>
                         </div>
                     ))}
+                    {showLoadingDots && (
+                        <div className="mb-2 transition-all duration-500">
+                            <div className="flex items-center gap-2 mb-1">
+                                <span
+                                    className="opacity-60"
+                                    style={{
+                                        color: currentColors.secondary,
+                                        fontSize: '0.75rem'
+                                    }}
+                                >
+                                    [{new Date().toLocaleTimeString()}]
+                                </span>
+                            </div>
+                            <div
+                                className="transition-all duration-500"
+                                style={{
+                                    color: currentColors.primary,
+                                    fontSize: '1rem'
+                                }}
+                            >
+                                <span
+                                    className="font-bold"
+                                    style={{
+                                        color: currentColors.primary,
+                                        fontSize: '0.75rem'
+                                    }}
+                                >
+                                    TOMIE
+                                </span>
+                                <span className="mx-1">
+                                    {'>'}
+                                </span>
+                                <LoadingDots color={currentColors.primary} />
+                            </div>
+                        </div>
+                    )}
                     <div ref={messagesEndRef} />
                 </div>
             </div>
