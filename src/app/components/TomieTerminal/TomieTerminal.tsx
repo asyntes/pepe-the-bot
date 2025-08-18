@@ -1,10 +1,10 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { moodColors, moodEyes } from './mood/moodConfig';
-import { analyzeMoodFromText, updateMoodState, createInitialMoodState, updateConsecutiveCounts } from './mood/moodAnalyzer';
 import { generateFullResponse } from './mood/responseGenerator';
+import { createInitialMoodState, updateMoodState } from './mood/moodAnalyzer';
 import { generateDynamicStyles } from './styles/dynamicStyles';
 import { typeMessage } from './typing/typewriter';
 import { handleCommand } from './commands/commandHandler';
@@ -28,9 +28,51 @@ export default function TomieTerminal() {
     const [isGlitching, setIsGlitching] = useState(false);
     const [showInterference, setShowInterference] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
+    const [cursorPosition, setCursorPosition] = useState(0);
 
     const { isInitialized, isSafari, isTouchDevice, messages, setMessages } = useTerminalSetup(inputRef);
     const { messagesEndRef } = useMessageHandling(messages);
+
+    const updateCursorPosition = useCallback(() => {
+        if (inputRef.current) {
+            const tempSpan = document.createElement('span');
+            tempSpan.style.font = window.getComputedStyle(inputRef.current).font;
+            tempSpan.style.visibility = 'hidden';
+            tempSpan.style.position = 'absolute';
+            tempSpan.style.whiteSpace = 'pre';
+            tempSpan.textContent = input;
+
+            document.body.appendChild(tempSpan);
+            const textWidth = tempSpan.offsetWidth;
+            document.body.removeChild(tempSpan);
+
+            const scrollLeft = inputRef.current.scrollLeft;
+            const inputWidth = inputRef.current.offsetWidth;
+
+            let cursorPos = textWidth - scrollLeft;
+
+            cursorPos = Math.max(0, Math.min(cursorPos, inputWidth - 10));
+
+            setCursorPosition(cursorPos);
+        }
+    }, [input]);
+
+    useEffect(() => {
+        if (!isTouchDevice && inputFocused) {
+            updateCursorPosition();
+        }
+    }, [input, inputFocused, isTouchDevice, updateCursorPosition]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (inputFocused && !isTouchDevice) {
+                updateCursorPosition();
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [inputFocused, isTouchDevice, updateCursorPosition]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -62,25 +104,6 @@ export default function TomieTerminal() {
         setMessages(prev => [...prev, userMessage]);
         setInput('');
 
-        const detectedMoodFromText = analyzeMoodFromText(input);
-        const { newState, shouldChangeMood } = updateMoodState(moodState, detectedMoodFromText);
-
-        if (shouldChangeMood) {
-            setShowInterference(true);
-            setIsGlitching(true);
-
-            setTimeout(() => {
-                setMoodState(newState);
-                setTimeout(() => {
-                    setIsGlitching(false);
-                    setTimeout(() => {
-                        setShowInterference(false);
-                    }, 200);
-                }, 300);
-            }, 150);
-        } else {
-            setMoodState(newState);
-        }
 
         const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState.currentMood);
 
@@ -108,10 +131,48 @@ export default function TomieTerminal() {
         await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
         await typeMessage(aiResponse, detectedMood, setMessages, setIsTyping, inputRef, isTouchDevice);
 
-        const newConsecutiveCounts = updateConsecutiveCounts(consecutiveCounts, moodState.currentMood, detectedMood);
-        setConsecutiveCounts(newConsecutiveCounts);
+        const { newState, shouldChangeMood } = updateMoodState(moodState, detectedMood);
 
-        if (newConsecutiveCounts[detectedMood] >= 3 && moodState.currentMood !== detectedMood) {
+        if (shouldChangeMood) {
+            setShowInterference(true);
+            setIsGlitching(true);
+
+            setTimeout(() => {
+                setMoodState(newState);
+                setTimeout(() => {
+                    setIsGlitching(false);
+                    setTimeout(() => {
+                        setShowInterference(false);
+                    }, 200);
+                }, 300);
+            }, 150);
+        } else {
+            setMoodState(newState);
+        }
+
+        setConsecutiveCounts(prev => {
+            const newCounts = { ...prev };
+
+            if (moodState.currentMood !== 'neutral' && detectedMood !== moodState.currentMood) {
+                newCounts[moodState.currentMood] = Math.max(0, newCounts[moodState.currentMood] - 1);
+                return newCounts;
+            }
+
+            Object.keys(newCounts).forEach(key => {
+                if (key === detectedMood) {
+                    newCounts[key as Mood] += 1;
+                } else {
+                    newCounts[key as Mood] = 0;
+                }
+            });
+            return newCounts;
+        });
+
+        const updatedCounts = moodState.currentMood !== 'neutral' && detectedMood !== moodState.currentMood
+            ? { ...consecutiveCounts, [moodState.currentMood]: Math.max(0, consecutiveCounts[moodState.currentMood] - 1) }
+            : { ...consecutiveCounts, [detectedMood]: consecutiveCounts[detectedMood] + 1 };
+
+        if (updatedCounts[detectedMood] >= 3 && moodState.currentMood !== detectedMood) {
             setShowInterference(true);
             setIsGlitching(true);
 
@@ -305,28 +366,36 @@ export default function TomieTerminal() {
                             ref={inputRef}
                             type="text"
                             value={input}
-                            onChange={(e) => setInput(e.target.value)}
+                            onChange={(e) => {
+                                setInput(e.target.value);
+                            }}
+                            onScroll={() => {
+                                if (inputFocused) {
+                                    updateCursorPosition();
+                                }
+                            }}
                             onFocus={() => {
                                 setInputFocused(true);
+                                updateCursorPosition();
                             }}
                             onBlur={() => {
                                 setInputFocused(false);
                             }}
                             disabled={isTyping || isProcessing}
-                            className="w-full bg-transparent border-none outline-none terminal-input caret-transparent"
+                            className={`w-full bg-transparent border-none outline-none terminal-input ${isTouchDevice ? '' : 'caret-transparent'}`}
                             style={{
                                 color: currentColors.primary,
                                 fontSize: '1rem'
                             }}
                             placeholder={isProcessing ? "Processing request..." : isTyping ? "Tomie is typing..." : (!inputFocused ? "Ask me anything" : "")}
                         />
-                        {!isTyping && !isProcessing && inputFocused && (
+                        {!isTyping && !isProcessing && inputFocused && !isTouchDevice && (
                             <span
                                 className="absolute top-0 pointer-events-none font-mono"
                                 style={{
                                     color: currentColors.primary,
                                     fontSize: '1rem',
-                                    left: `${input.length * 0.6}rem`
+                                    left: `${cursorPosition}px`
                                 }}
                             >
                                 █
