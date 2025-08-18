@@ -27,10 +27,10 @@ CONFUSED MOOD: Uncertain, seeking clarification. Ask counter-questions. Express 
 
 Mood Detection Guidelines (for the [MOOD:] tag only):
 - angry: User is insulting, rude, hostile, uses profanity, or is demanding/aggressive
-- trusted: User is polite, thankful, asking for help nicely, being friendly or collaborative  
+- trusted: User is polite, thankful, asking for help nicely, being friendly, collaborative, apologizing, or trying to make peace
 - excited: User shows enthusiasm, uses exclamation marks, expresses amazement or energy
 - confused: User asks unclear questions, seems lost, requests clarification, or appears uncertain
-- neutral: Normal conversation, factual questions, casual interaction
+- neutral: Normal conversation, factual questions, casual interaction, mild politeness
 
 Current AI mood state: ${currentMood} (respond using THIS mood's personality)`;
 
@@ -40,6 +40,8 @@ Current AI mood state: ${currentMood} (respond using THIS mood's personality)`;
 CRITICAL: You are about to transition to ${upcomingMood.toUpperCase()} mood. Completely abandon ${currentMood} personality and respond with full ${upcomingMood.toUpperCase()} characteristics as described above.`;
     }
 
-    return basePrompt;
+    return `${basePrompt}
+
+CRITICAL: Do NOT change your tone or personality. Maintain your current ${currentMood.toUpperCase()} mood strictly.`;
   }
 }

@@ -8,50 +8,45 @@ export const updateMoodState = (
     detectedMood: Mood
 ): { newState: MoodState; shouldChangeMood: boolean } => {
     const newScores = { ...currentState.scores };
-    let newNonMatchingCount = currentState.nonMatchingCount;
 
-    if (detectedMood === currentState.currentMood) {
-        newScores[detectedMood] += 1;
-        newNonMatchingCount = 0;
-        Object.keys(newScores).forEach(mood => {
-            if (mood !== detectedMood) {
-                newScores[mood as Mood] = 0;
-            }
-        });
-    } else if (currentState.currentMood !== 'neutral') {
-        newNonMatchingCount += 1;
-        
-        if (newNonMatchingCount >= 2) {
-            Object.keys(newScores).forEach(mood => {
-                newScores[mood as Mood] = 0;
-            });
-            const newState: MoodState = {
-                currentMood: 'neutral',
-                scores: newScores,
-                lastDetectedMood: detectedMood,
-                nonMatchingCount: 0
-            };
-            return { newState, shouldChangeMood: true };
-        }
-    } else {
-        newNonMatchingCount = 0;
+    if (currentState.currentMood === 'neutral') {
         if (detectedMood !== 'neutral') {
             newScores[detectedMood] += 1;
+        }
+    } else {
+        if (detectedMood === currentState.currentMood) {
+            newScores[detectedMood] += 1;
+        } else {
+            newScores['neutral'] += 1;
             Object.keys(newScores).forEach(mood => {
-                if (mood !== detectedMood) {
+                if (mood !== 'neutral') {
                     newScores[mood as Mood] = 0;
                 }
             });
         }
     }
 
-    const shouldChangeMood = newScores[detectedMood] >= 2 && detectedMood !== currentState.currentMood;
+    let shouldChangeMood = false;
+    let newMood = currentState.currentMood;
+
+    if (currentState.currentMood === 'neutral' && detectedMood !== 'neutral' && newScores[detectedMood] >= 2) {
+        shouldChangeMood = true;
+        newMood = detectedMood;
+        Object.keys(newScores).forEach(mood => {
+            if (mood !== detectedMood) {
+                newScores[mood as Mood] = 0;
+            }
+        });
+    } else if (currentState.currentMood !== 'neutral' && newScores['neutral'] >= 2) {
+        shouldChangeMood = true;
+        newMood = 'neutral';
+    }
 
     const newState: MoodState = {
-        currentMood: shouldChangeMood ? detectedMood : currentState.currentMood,
+        currentMood: newMood,
         scores: newScores,
         lastDetectedMood: detectedMood,
-        nonMatchingCount: newNonMatchingCount
+        nonMatchingCount: 0
     };
 
     return { newState, shouldChangeMood };
