@@ -11,7 +11,7 @@ import { handleCommand } from './commands/commandHandler';
 import { useTerminalSetup } from './hooks/useTerminalSetup';
 import { useMessageHandling } from './hooks/useMessageHandling';
 import { LoadingDots } from './components/LoadingDots';
-import { Message, Mood, MoodState } from './types';
+import { Message, MoodState } from './types';
 
 export default function TomieTerminal() {
     const [input, setInput] = useState('');
@@ -95,7 +95,9 @@ export default function TomieTerminal() {
 
         setShowLoadingDots(true);
 
-        const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState);
+        const conversationMessages = messages.filter(msg => !msg.isSystemGenerated);
+        
+        const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState, conversationMessages);
 
         console.log('DEBUG - Intro response received:', introResponse);
         console.log('DEBUG - Will show intro?', !!introResponse);
@@ -108,7 +110,8 @@ export default function TomieTerminal() {
                 text: '',
                 isUser: false,
                 timestamp: new Date(),
-                mood: moodState.currentMood
+                mood: moodState.currentMood,
+                isSystemGenerated: true
             };
 
             setMessages(prev => [...prev, introMessage]);

@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { prompt, currentMood, upcomingMood } = await request.json();
+        const { prompt, currentMood, upcomingMood, messages } = await request.json();
 
         const systemPrompt = `You are Tomie, a female AI character with a terminal interface personality. You identify as a woman despite being an artificial intelligence. Respond naturally but very concisely (keep under 100 words). Respond in the same language as the user's message. NEVER use emoticons, emojis, or any visual symbols like :), :D, etc. Provide your response directly, then add [MOOD:emotion] at the end based on the user's input. Do not include any reasoning or extra analysis.
 
@@ -58,12 +58,25 @@ Current AI mood state: ${currentMood} (respond using THIS mood's personality)${u
             baseURL: 'https://api.x.ai/v1',
         });
 
+        const conversationMessages = [];
+        
+        conversationMessages.push({ role: 'system', content: systemPrompt });
+        
+        if (messages && Array.isArray(messages)) {
+            messages.forEach((msg: { isUser: boolean; text: string }) => {
+                if (msg.isUser) {
+                    conversationMessages.push({ role: 'user', content: msg.text });
+                } else {
+                    conversationMessages.push({ role: 'assistant', content: msg.text });
+                }
+            });
+        }
+        
+        conversationMessages.push({ role: 'user', content: prompt });
+
         const completion = await openai.chat.completions.create({
             model: 'grok-3-mini',
-            messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: prompt },
-            ],
+            messages: conversationMessages,
             temperature: 0,
             top_p: 0.95,
             max_tokens: 1024,
