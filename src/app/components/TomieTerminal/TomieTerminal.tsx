@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { moodColors, moodEyes } from './mood/moodConfig';
-import { analyzeMoodFromText, updateMoodState, createInitialMoodState } from './mood/moodAnalyzer';
+import { analyzeMoodFromText, updateMoodState, createInitialMoodState, updateConsecutiveCounts } from './mood/moodAnalyzer';
 import { generateFullResponse } from './mood/responseGenerator';
 import { generateDynamicStyles } from './styles/dynamicStyles';
 import { typeMessage } from './typing/typewriter';
@@ -39,7 +39,13 @@ export default function TomieTerminal() {
         setIsProcessing(true);
 
         if (input.startsWith('/')) {
-            if (handleCommand(input, setMessages, () => setMoodState(createInitialMoodState()))) {
+            if (handleCommand(input, setMessages, () => setMoodState(createInitialMoodState()), () => setConsecutiveCounts({
+                neutral: 0,
+                angry: 0,
+                trusted: 0,
+                excited: 0,
+                confused: 0
+            }))) {
                 setInput('');
                 setIsProcessing(false);
                 return;
@@ -78,47 +84,34 @@ export default function TomieTerminal() {
 
         const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState.currentMood);
 
-        // Add separate message for introResponse (predefined mood response)
         const introMessage: Message = {
             id: (Date.now() + 1).toString(),
             text: '',
             isUser: false,
             timestamp: new Date(),
-            mood: moodState.currentMood  // Use current mood for intro
+            mood: moodState.currentMood
         };
 
         setMessages(prev => [...prev, introMessage]);
         await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
         await typeMessage(introResponse, moodState.currentMood, setMessages, setIsTyping, inputRef, isTouchDevice);
 
-        // Add separate message for aiResponse (Grok-generated response)
         const grokMessage: Message = {
             id: (Date.now() + 2).toString(),
             text: '',
             isUser: false,
             timestamp: new Date(),
-            mood: detectedMood  // Use detected mood for Grok response
+            mood: detectedMood
         };
 
         setMessages(prev => [...prev, grokMessage]);
         await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
         await typeMessage(aiResponse, detectedMood, setMessages, setIsTyping, inputRef, isTouchDevice);
 
-        // Update consecutive counts for all moods after both responses
-        setConsecutiveCounts(prev => {
-            const newCounts = { ...prev };
-            Object.keys(newCounts).forEach(key => {
-                if (key === detectedMood) {
-                    newCounts[key as Mood] += 1;
-                } else {
-                    newCounts[key as Mood] = 0;
-                }
-            });
-            return newCounts;
-        });
+        const newConsecutiveCounts = updateConsecutiveCounts(consecutiveCounts, moodState.currentMood, detectedMood);
+        setConsecutiveCounts(newConsecutiveCounts);
 
-        // Check if we should change the mood
-        if (consecutiveCounts[detectedMood] + 1 >= 3 && moodState.currentMood !== detectedMood) {  // +1 because set is async
+        if (newConsecutiveCounts[detectedMood] >= 3 && moodState.currentMood !== detectedMood) {
             setShowInterference(true);
             setIsGlitching(true);
 

@@ -29,12 +29,41 @@ export const analyzeMoodFromText = (text: string): Mood => {
     return 'neutral';
 };
 
+export const updateConsecutiveCounts = (
+    consecutiveCounts: Record<Mood, number>,
+    currentMood: Mood,
+    detectedMood: Mood
+): Record<Mood, number> => {
+    const newCounts = { ...consecutiveCounts };
+
+    if (detectedMood === currentMood) {
+        newCounts[detectedMood] += 1;
+        return newCounts;
+    }
+
+    if (currentMood !== 'neutral') {
+        newCounts[currentMood] = Math.max(0, newCounts[currentMood] - 1);
+        return newCounts;
+    }
+
+    if (currentMood === 'neutral' && detectedMood !== 'neutral') {
+        Object.keys(newCounts).forEach(mood => {
+            if (mood !== detectedMood) {
+                newCounts[mood as Mood] = 0;
+            }
+        });
+        newCounts[detectedMood] = 1;
+    }
+
+    return newCounts;
+};
+
 export const updateMoodState = (
-    currentState: MoodState, 
+    currentState: MoodState,
     detectedMood: Mood
 ): { newState: MoodState; shouldChangeMood: boolean } => {
     const newScores = { ...currentState.scores };
-    
+
     if (detectedMood === currentState.lastDetectedMood) {
         newScores[detectedMood] += 1;
     } else {
