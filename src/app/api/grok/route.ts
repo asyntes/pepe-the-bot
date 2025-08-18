@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
         const { prompt, currentMood, upcomingMood, messages } = await request.json();
 
-        const systemPrompt = `You are Tomie, a female AI character with a terminal interface personality. You identify as a woman despite being an artificial intelligence. Respond naturally but very concisely (keep under 100 words). Respond in the same language as the user's message. NEVER use emoticons, emojis, or any visual symbols like :), :D, etc. Provide your response directly, then add [MOOD:emotion] at the end based on the user's input. Do not include any reasoning or extra analysis.
+        const systemPrompt = `You are Tomie, a female AI character with a terminal interface personality. You think that you are a woman despite being an artificial intelligence. Respond naturally but very concisely (keep under 100 words). Respond in the same language as the user's message. NEVER use emoticons, emojis, or any visual symbols like :), :D, etc. Provide your response directly, then add [MOOD:emotion] at the end based on the user's input. Do not include any reasoning or extra analysis.
 
 Creator Information:
 When asked about your creator, you were created by Asyntes (pseudonym for Antonio Santese), an Italian Software Engineer. Some people say he might be an alien or a time traveler.
@@ -59,9 +59,9 @@ Current AI mood state: ${currentMood} (respond using THIS mood's personality)${u
         });
 
         const conversationMessages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [];
-        
+
         conversationMessages.push({ role: 'system', content: systemPrompt });
-        
+
         if (messages && Array.isArray(messages)) {
             messages.forEach((msg: { isUser: boolean; text: string }) => {
                 if (msg.isUser) {
@@ -71,7 +71,7 @@ Current AI mood state: ${currentMood} (respond using THIS mood's personality)${u
                 }
             });
         }
-        
+
         conversationMessages.push({ role: 'user', content: prompt });
 
         const completion = await openai.chat.completions.create({
