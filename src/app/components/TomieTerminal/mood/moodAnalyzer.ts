@@ -45,7 +45,7 @@ export const updateMoodState = (
         }
     }
 
-    const shouldChangeMood = newScores[detectedMood] >= 3 && detectedMood !== currentState.currentMood;
+    const shouldChangeMood = newScores[detectedMood] >= 2 && detectedMood !== currentState.currentMood;
 
     const newState: MoodState = {
         currentMood: shouldChangeMood ? detectedMood : currentState.currentMood,
