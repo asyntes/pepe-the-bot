@@ -10,6 +10,7 @@ An interactive AI terminal interface built with Next.js and React, featuring dyn
 - **Built-in Commands**: System commands for navigation and interaction
 - **Real-time Interaction**: Instant mood analysis and contextual responses
 - **Smart Input Management**: Input disabled during processing with visual feedback
+- **Multilingual Support**: Automatic language detection with Italian and English support
 
 ## Mood States
 
@@ -25,6 +26,23 @@ Each mood state features unique:
 - Color schemes and visual styling
 - Eye expressions and animations
 - Response patterns and personality traits
+
+## Language Support
+
+Tomie automatically detects your browser language and adapts the interface accordingly:
+
+- **Italian (Italiano)**: Complete interface translation including welcome messages, commands, and mood indicators
+- **English**: Default language with full functionality
+- **Automatic Detection**: Uses browser language settings to determine the appropriate language
+- **Fallback Support**: Defaults to English for unsupported languages
+
+### Translated Elements
+
+- Terminal initialization messages
+- System commands and responses
+- Help documentation and privacy policy
+- Mood state indicators (NEUTRAL/NEUTRALE, ANGRY/ARRABBIATA, etc.)
+- User interface elements and placeholders
 
 ## Available Commands
 
@@ -82,7 +100,20 @@ npm run dev
 - **Tailwind CSS** - Utility-first styling
 - **OpenAI SDK** - Client library for API interactions
 - **xAI Grok API** - AI responses powered by Grok-3-Mini
+- **Custom i18n System** - Automatic language detection and translation support
 - **ESLint** - Code linting and formatting
+
+## Architecture
+
+### Internationalization (i18n)
+
+The application features a custom-built internationalization system:
+
+- **Automatic Language Detection**: Uses `navigator.language` to detect browser language on initialization
+- **Translation Files**: JSON-based translation system (`en.json`, `it.json`) in `src/app/i18n/`
+- **Custom Hook**: `useI18n()` provides translation functions and language management
+- **Type-Safe Translations**: Full TypeScript support with proper type definitions
+- **Performance Optimized**: Uses `useMemo` for efficient message caching and re-rendering
 
 ## License
 

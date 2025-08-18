@@ -1,0 +1,62 @@
+{
+  "terminal": {
+    "initializing": "Inizializzazione terminale...",
+    "mood": "UMORE",
+    "processing": "Elaborazione richiesta...",
+    "typing": "Tomie sta scrivendo...",
+    "placeholder": "Chiedimi qualsiasi cosa",
+    "send": "INVIA"
+  },
+  "welcome": {
+    "initialized": "Tomie AI Terminal di Asyntes inizializzato.",
+    "connection": "Connessione stabilita. AI pronta per l'input.",
+    "help": "Digita /help per vedere i comandi disponibili.",
+    "privacy": "Informativa Privacy: Digita /privacy per i dettagli.",
+    "greeting": "Ciao! Sono Tomie, la tua guida per svelare i misteri dell'universo. Pronto a tuffarti nell'ignoto?"
+  },
+  "moods": {
+    "neutral": "NEUTRALE",
+    "angry": "ARRABBIATA",
+    "trusted": "FIDUCIOSA",
+    "excited": "ENTUSIASTA",
+    "confused": "CONFUSA"
+  },
+  "commands": {
+    "cleared": "Terminale pulito. Memoria e punteggi umore reimpostati.",
+    "help": "Comandi disponibili:\\n/clear - Pulisce il terminale\\n/help - Mostra questo aiuto\\n/repo - Visita repository GitHub\\n/privacy - Visualizza informativa privacy",
+    "repo": "Apertura repository GitHub: https://github.com/asyntes/tomie",
+    "unknown": "ERRORE: Comando sconosciuto '{command}'. Digita /help per i comandi disponibili."
+  },
+  "privacy": {
+    "title": "INFORMATIVA SULLA PRIVACY",
+    "dataProcessing": "Avviso di Elaborazione Dati:",
+    "bulletPoints": [
+      "I tuoi messaggi vengono inviati a xAI (Grok API) per la generazione di risposte AI",
+      "I messaggi vengono anche elaborati sull'infrastruttura Vercel per l'hosting dell'applicazione",
+      "Nessun dato di conversazione viene memorizzato o registrato permanentemente da questa applicazione",
+      "La trasmissione dei dati avviene solo per la generazione di risposte in tempo reale",
+      "Non vengono raccolte informazioni personali oltre ai messaggi che scegli di inviare"
+    ],
+    "securityTitle": "IMPORTANTE AVVISO DI SICUREZZA:",
+    "securityIntro": "NON condividere informazioni sensibili come:",
+    "securityPoints": [
+      "Password, chiavi API o token di accesso",
+      "Numeri di identificazione personale (Codice fiscale, numeri ID)",
+      "Informazioni su carte di credito o bancarie",
+      "Indirizzi privati o numeri di telefono",
+      "Dati aziendali o personali riservati"
+    ],
+    "thirdPartyTitle": "Servizi di Terze Parti:",
+    "thirdPartyPoints": [
+      "xAI: Elabora i tuoi messaggi tramite il loro modello Grok-3-Mini",
+      "Vercel: Ospita l'applicazione e gestisce il routing API"
+    ],
+    "retention": "I tuoi messaggi vengono elaborati in tempo reale e non vengono conservati dopo la fine della sessione.",
+    "questions": "Per domande sulla gestione dei dati, fai riferimento a:",
+    "links": [
+      "Informativa Privacy xAI: https://x.ai/privacy",
+      "Informativa Privacy Vercel: https://vercel.com/legal/privacy-policy"
+    ],
+    "lastUpdated": "Ultimo aggiornamento:"
+  }
+}

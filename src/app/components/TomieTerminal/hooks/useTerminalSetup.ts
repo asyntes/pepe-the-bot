@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Mood } from '../mood/moodConfig';
+import { useI18n } from '../../../i18n/useI18n';
 
 interface Message {
     id: string;
@@ -16,46 +17,48 @@ export const useTerminalSetup = (
     const [isSafari, setIsSafari] = useState(false);
     const [isTouchDevice, setIsTouchDevice] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
+    const { t } = useI18n();
+
+    const initialMessages = useMemo(() => [
+        {
+            id: '1',
+            text: t('welcome.initialized'),
+            isUser: false,
+            timestamp: new Date(),
+            mood: 'neutral' as Mood
+        },
+        {
+            id: '2',
+            text: t('welcome.connection'),
+            isUser: false,
+            timestamp: new Date(),
+            mood: 'neutral' as Mood
+        },
+        {
+            id: '3',
+            text: t('welcome.help'),
+            isUser: false,
+            timestamp: new Date(),
+            mood: 'neutral' as Mood
+        },
+        {
+            id: '4',
+            text: t('welcome.privacy'),
+            isUser: false,
+            timestamp: new Date(),
+            mood: 'neutral' as Mood
+        },
+        {
+            id: '5',
+            text: t('welcome.greeting'),
+            isUser: false,
+            timestamp: new Date(),
+            mood: 'excited' as Mood
+        }
+    ], [t]);
 
     useEffect(() => {
         if (!isInitialized) {
-            const initialMessages: Message[] = [
-                {
-                    id: '1',
-                    text: 'Tomie AI Terminal by Asyntes initialized.',
-                    isUser: false,
-                    timestamp: new Date(),
-                    mood: 'neutral'
-                },
-                {
-                    id: '2',
-                    text: 'Connection established. Ready for input.',
-                    isUser: false,
-                    timestamp: new Date(),
-                    mood: 'neutral'
-                },
-                {
-                    id: '3',
-                    text: 'Type /help to see available commands.',
-                    isUser: false,
-                    timestamp: new Date(),
-                    mood: 'neutral'
-                },
-                {
-                    id: '4',
-                    text: 'Privacy Policy: Type /privacy for details.',
-                    isUser: false,
-                    timestamp: new Date(),
-                    mood: 'neutral'
-                },
-                {
-                    id: '5',
-                    text: 'Hello! I\'m Tomie, your guide to unlocking the mysteries of the universe. Ready to dive into the unknown?',
-                    isUser: false,
-                    timestamp: new Date(),
-                    mood: 'excited'
-                }
-            ];
             setMessages(initialMessages);
             setIsInitialized(true);
         }
@@ -97,7 +100,7 @@ export const useTerminalSetup = (
             window.removeEventListener('orientationchange', handleOrientationChange);
             window.removeEventListener('resize', handleOrientationChange);
         };
-    }, [isInitialized, inputRef]);
+    }, [isInitialized, inputRef, initialMessages]);
 
     return {
         isInitialized,
