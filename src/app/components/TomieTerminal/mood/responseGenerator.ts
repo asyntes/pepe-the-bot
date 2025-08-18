@@ -85,10 +85,10 @@ export const generateFullResponse = async (
             const currentScore = moodState.scores[detectedMood as Mood] || 0;
             console.log('DEBUG - Current score for', detectedMood, ':', currentScore);
 
-            if (currentScore === 2) {
+            if (currentScore === 1) {
                 introResponse = generatePredefinedResponse(detectedMood);
                 console.log('DEBUG - Intro response generated:', introResponse);
-                console.log('DEBUG - This will be the 3rd interaction, mood will change to:', detectedMood);
+                console.log('DEBUG - This will be the 2nd interaction, mood will change to:', detectedMood);
 
                 const secondResponse = await fetch('/api/grok', {
                     method: 'POST',
