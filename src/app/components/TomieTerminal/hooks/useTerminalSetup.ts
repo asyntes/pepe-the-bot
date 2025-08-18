@@ -43,7 +43,7 @@ export const useTerminalSetup = (
                 },
                 {
                     id: '4',
-                    text: 'Privacy Notice: Type /privacy for details.',
+                    text: 'Privacy Policy: Type /privacy for details.',
                     isUser: false,
                     timestamp: new Date(),
                     mood: 'neutral'
