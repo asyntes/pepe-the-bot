@@ -16,9 +16,21 @@ export const metadata: Metadata = {
   title: "Tomie AI",
   description: "Try to change Tomie's mood! Be careful what you say to her, she might get angry...",
   icons: {
-    icon: '/svg/normal-eye.svg',
-    apple: '/svg/normal-eye.svg',
-    shortcut: '/svg/normal-eye.svg',
+    icon: '/favicon.ico',
+    apple: '/favicon.ico',
+    shortcut: '/favicon.ico',
+  },
+  openGraph: {
+    title: "Tomie AI",
+    description: "Try to change Tomie's mood! Be careful what you say to her, she might get angry...",
+    images: ['/img/banner.png'],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Tomie AI",
+    description: "Try to change Tomie's mood! Be careful what you say to her, she might get angry...",
+    images: ['/img/banner.png'],
   },
 };
 
