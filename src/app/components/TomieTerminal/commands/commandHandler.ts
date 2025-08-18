@@ -1,5 +1,4 @@
 import { Mood } from '../mood/moodConfig';
-import { privacyPolicyText } from '../privacy/privacyPolicy';
 
 interface Message {
     id: string;
@@ -12,7 +11,9 @@ interface Message {
 export const handleCommand = (
     command: string,
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
-    setCurrentMood: () => void
+    setCurrentMood: () => void,
+    t: (key: string, params?: Record<string, string>) => string,
+    formatPrivacyPolicy: () => string
 ): boolean => {
     const lowerCommand = command.toLowerCase().trim();
 
@@ -23,7 +24,7 @@ export const handleCommand = (
         setTimeout(() => {
             const systemMessage: Message = {
                 id: Date.now().toString(),
-                text: 'Terminal cleared. Memory and mood scores reset.',
+                text: t('commands.cleared'),
                 isUser: false,
                 timestamp: new Date()
             };
@@ -42,7 +43,7 @@ export const handleCommand = (
 
         const helpMessage: Message = {
             id: (Date.now() + 1).toString(),
-            text: 'Available commands:\\n/clear - Clear terminal\\n/help - Show this help\\n/repo - Visit GitHub repository\\n/privacy - View privacy policy',
+            text: t('commands.help'),
             isUser: false,
             timestamp: new Date()
         };
@@ -61,7 +62,7 @@ export const handleCommand = (
 
         const repoMessage: Message = {
             id: (Date.now() + 1).toString(),
-            text: 'Opening GitHub repository: https://github.com/asyntes/tomie',
+            text: t('commands.repo'),
             isUser: false,
             timestamp: new Date()
         };
@@ -82,7 +83,7 @@ export const handleCommand = (
 
         const privacyMessage: Message = {
             id: (Date.now() + 1).toString(),
-            text: privacyPolicyText,
+            text: formatPrivacyPolicy(),
             isUser: false,
             timestamp: new Date()
         };
@@ -100,7 +101,7 @@ export const handleCommand = (
 
     const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: `ERROR: Unknown command '${lowerCommand}'. Type /help for available commands.`,
+        text: t('commands.unknown', { command: lowerCommand }),
         isUser: false,
         timestamp: new Date()
     };

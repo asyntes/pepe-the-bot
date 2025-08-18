@@ -12,6 +12,7 @@ import { useTerminalSetup } from './hooks/useTerminalSetup';
 import { useMessageHandling } from './hooks/useMessageHandling';
 import { LoadingDots } from './components/LoadingDots';
 import { Message, MoodState } from './types';
+import { useI18n } from '../../i18n/useI18n';
 
 export default function TomieTerminal() {
     const [input, setInput] = useState('');
@@ -27,6 +28,7 @@ export default function TomieTerminal() {
 
     const { isInitialized, isSafari, isTouchDevice, messages, setMessages } = useTerminalSetup(inputRef);
     const { messagesEndRef } = useMessageHandling(messages);
+    const { t, formatPrivacyPolicy } = useI18n();
 
     const updateCursorPosition = useCallback(() => {
         if (inputRef.current) {
@@ -76,7 +78,7 @@ export default function TomieTerminal() {
         setIsProcessing(true);
 
         if (input.startsWith('/')) {
-            if (handleCommand(input, setMessages, () => setMoodState(createInitialMoodState()))) {
+            if (handleCommand(input, setMessages, () => setMoodState(createInitialMoodState()), t, formatPrivacyPolicy)) {
                 setInput('');
                 setIsProcessing(false);
                 return;
@@ -167,7 +169,7 @@ export default function TomieTerminal() {
                     color: currentColors.primary
                 }}
             >
-                <div>Initializing terminal...</div>
+                <div>{t('terminal.initializing')}</div>
             </div>
         );
     }
@@ -232,9 +234,9 @@ export default function TomieTerminal() {
                 >
                     <span
                         className="glitch-text"
-                        data-text={`MOOD: ${moodState.currentMood.toUpperCase()}`}
+                        data-text={`${t('terminal.mood')}: ${t(`moods.${moodState.currentMood}`)}`}
                     >
-                        MOOD: {moodState.currentMood.toUpperCase()}
+                        {t('terminal.mood')}: {t(`moods.${moodState.currentMood}`)}
                     </span>
                 </div>
             </div>
@@ -406,7 +408,7 @@ export default function TomieTerminal() {
                                 color: currentColors.primary,
                                 fontSize: '1rem'
                             }}
-                            placeholder={isProcessing ? "Processing request..." : isTyping ? "Tomie is typing..." : (!inputFocused ? "Ask me anything" : "")}
+                            placeholder={isProcessing ? t('terminal.processing') : isTyping ? t('terminal.typing') : (!inputFocused ? t('terminal.placeholder') : "")}
                         />
                         {!isTyping && !isProcessing && inputFocused && !isTouchDevice && (
                             <span
@@ -431,7 +433,7 @@ export default function TomieTerminal() {
                             backgroundColor: 'transparent'
                         }}
                     >
-                        SEND
+                        {t('terminal.send')}
                     </button>
                 </div>
                 <div
