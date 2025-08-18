@@ -98,11 +98,8 @@ export default function TomieTerminal() {
         setShowLoadingDots(true);
 
         const conversationMessages = messages.filter(msg => !('isSystemGenerated' in msg && msg.isSystemGenerated));
-        
-        const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState, conversationMessages);
 
-        console.log('DEBUG - Intro response received:', introResponse);
-        console.log('DEBUG - Will show intro?', !!introResponse);
+        const { introResponse, aiResponse, detectedMood } = await generateFullResponse(input, moodState, conversationMessages);
 
         setShowLoadingDots(false);
 
@@ -308,7 +305,7 @@ export default function TomieTerminal() {
                                     {message.text.split('\n').map((line, i) => {
                                         const isLastLine = i === message.text.split('\n').length - 1;
                                         const showCursor = !message.isUser && isTyping && index === messages.length - 1 && isLastLine;
-                                        
+
                                         return i === 0 ? (
                                             <span key={i}>
                                                 {line}

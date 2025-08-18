@@ -52,9 +52,6 @@ export const generateFullResponse = async (
     let upcomingMood: Mood | undefined;
     let introResponse = '';
 
-    console.log('DEBUG - Current mood:', moodState.currentMood);
-    console.log('DEBUG - Current scores:', moodState.scores);
-
     try {
         const response = await fetch('/api/grok', {
             method: 'POST',
@@ -76,19 +73,14 @@ export const generateFullResponse = async (
         }
 
         const data = await response.json();
-        console.log('API Response Data:', data);
 
         const detectedMood = data.detectedMood;
-        console.log('DEBUG - Detected mood from Grok:', detectedMood);
 
         if (detectedMood !== moodState.currentMood && detectedMood !== 'neutral') {
             const currentScore = moodState.scores[detectedMood as Mood] || 0;
-            console.log('DEBUG - Current score for', detectedMood, ':', currentScore);
 
             if (currentScore === 1) {
                 introResponse = generatePredefinedResponse(detectedMood);
-                console.log('DEBUG - Intro response generated:', introResponse);
-                console.log('DEBUG - This will be the 2nd interaction, mood will change to:', detectedMood);
 
                 const secondResponse = await fetch('/api/grok', {
                     method: 'POST',

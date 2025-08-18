@@ -69,8 +69,6 @@ export class GrokService {
         stream: false,
       });
 
-      console.log('Full Grok API Response:', JSON.stringify(completion, null, 2));
-
       const message = completion.choices[0]?.message;
       let fullResponse = message?.content || '';
 
