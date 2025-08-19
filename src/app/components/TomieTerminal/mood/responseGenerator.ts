@@ -76,33 +76,53 @@ export const generateFullResponse = async (
 
         const detectedMood = data.detectedMood;
 
-        if (detectedMood !== moodState.currentMood && detectedMood !== 'neutral') {
-            const currentScore = moodState.scores[detectedMood as Mood] || 0;
-
-            if (currentScore === 1) {
-                introResponse = generatePredefinedResponse(detectedMood);
-
-                const secondResponse = await fetch('/api/grok', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        prompt: userInput,
-                        currentMood: moodState.currentMood,
-                        upcomingMood: detectedMood,
-                        messages: messages
-                    }),
-                });
-
-                if (secondResponse.ok) {
-                    const secondData = await secondResponse.json();
-                    return {
-                        introResponse,
-                        aiResponse: secondData.response,
-                        detectedMood: detectedMood
-                    };
+        // Simulate mood state update to predict mood change
+        let willChangeMood = false;
+        let newMood = moodState.currentMood;
+        
+        if (moodState.currentMood === 'neutral') {
+            if (detectedMood !== 'neutral') {
+                const currentScore = moodState.scores[detectedMood as Mood] || 0;
+                if (currentScore + 1 >= 2) {
+                    willChangeMood = true;
+                    newMood = detectedMood;
                 }
+            }
+        } else {
+            if (detectedMood === moodState.currentMood) {
+                // Stay in current mood
+            } else {
+                const neutralScore = moodState.scores['neutral'] || 0;
+                if (neutralScore + 1 >= 2) {
+                    willChangeMood = true;
+                    newMood = 'neutral';
+                }
+            }
+        }
+
+        if (willChangeMood) {
+            introResponse = generatePredefinedResponse(newMood);
+
+            const secondResponse = await fetch('/api/grok', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    prompt: userInput,
+                    currentMood: moodState.currentMood,
+                    upcomingMood: newMood,
+                    messages: messages
+                }),
+            });
+
+            if (secondResponse.ok) {
+                const secondData = await secondResponse.json();
+                return {
+                    introResponse,
+                    aiResponse: secondData.response,
+                    detectedMood: detectedMood
+                };
             }
         }
 
