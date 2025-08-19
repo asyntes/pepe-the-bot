@@ -7,12 +7,39 @@ export const generatePredefinedResponse = (mood: Mood): string => {
     return moodResponses[Math.floor(Math.random() * moodResponses.length)];
 };
 
+export const calculateMoodTransition = (
+    moodState: MoodState,
+    detectedMood: Mood
+): { willChangeMood: boolean; newMood: Mood } => {
+    let willChangeMood = false;
+    let newMood = moodState.currentMood;
+
+    if (moodState.currentMood === 'neutral') {
+        if (detectedMood !== 'neutral') {
+            const currentScore = moodState.scores[detectedMood as Mood] || 0;
+            if (currentScore + 1 >= 2) {
+                willChangeMood = true;
+                newMood = detectedMood;
+            }
+        }
+    } else {
+        if (detectedMood !== moodState.currentMood) {
+            const neutralScore = moodState.scores['neutral'] || 0;
+            if (neutralScore + 1 >= 2) {
+                willChangeMood = true;
+                newMood = 'neutral';
+            }
+        }
+    }
+
+    return { willChangeMood, newMood };
+};
+
 export const generateFullResponse = async (
     userInput: string,
     moodState: MoodState,
     messages: { isUser: boolean; text: string }[] = []
 ): Promise<{ introResponse: string; aiResponse: string; detectedMood: Mood }> => {
-    let upcomingMood: Mood | undefined;
     let introResponse = '';
 
     try {
@@ -24,7 +51,7 @@ export const generateFullResponse = async (
             body: JSON.stringify({
                 prompt: userInput,
                 currentMood: moodState.currentMood,
-                upcomingMood: upcomingMood,
+                upcomingMood: undefined,
                 messages: messages
             }),
         });
@@ -36,30 +63,9 @@ export const generateFullResponse = async (
         }
 
         const data = await response.json();
-
         const detectedMood = data.detectedMood;
 
-        let willChangeMood = false;
-        let newMood = moodState.currentMood;
-
-        if (moodState.currentMood === 'neutral') {
-            if (detectedMood !== 'neutral') {
-                const currentScore = moodState.scores[detectedMood as Mood] || 0;
-                if (currentScore + 1 >= 2) {
-                    willChangeMood = true;
-                    newMood = detectedMood;
-                }
-            }
-        } else {
-            if (detectedMood === moodState.currentMood) {
-            } else {
-                const neutralScore = moodState.scores['neutral'] || 0;
-                if (neutralScore + 1 >= 2) {
-                    willChangeMood = true;
-                    newMood = 'neutral';
-                }
-            }
-        }
+        const { willChangeMood, newMood } = calculateMoodTransition(moodState, detectedMood);
 
         if (willChangeMood) {
             introResponse = generatePredefinedResponse(newMood);

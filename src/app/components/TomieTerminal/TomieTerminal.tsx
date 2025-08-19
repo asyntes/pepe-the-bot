@@ -2,14 +2,18 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { moodColors, moodEyes, generateFullResponse, createInitialMoodState, updateMoodState } from '../../mood';
-import { generateMoodStyles, typeMessage, handleCommand, processLinksInText } from '../../utils/ui';
+import { moodColors, moodEyes } from '../../config/moodConfig';
+import { generateFullResponse } from '../../mood/responseHandler';
+import { createInitialMoodState, updateMoodState } from '../../mood/stateManager';
+import { generateMoodStyles } from './utils/moodStyleGenerator';
+import { typeMessage } from './utils/typingEffect';
+import { handleCommand } from './utils/terminalCommands';
+import { processLinksInText } from './utils/messageLinkProcessor';
 import { useTerminalSetup } from './hooks/useTerminalSetup';
 import { useMessageHandling } from './hooks/useMessageHandling';
 import { LoadingDots } from './components/LoadingDots';
 import { Message, MoodState } from '../../types';
 import { useI18n } from '../../i18n/useI18n';
-import { generateId } from '../../utils';
 import styles from './TomieTerminal.module.css';
 
 export default function TomieTerminal() {
@@ -84,7 +88,7 @@ export default function TomieTerminal() {
         }
 
         const userMessage: Message = {
-            id: generateId(),
+            id: Date.now().toString(),
             text: input,
             isUser: true,
             timestamp: new Date()

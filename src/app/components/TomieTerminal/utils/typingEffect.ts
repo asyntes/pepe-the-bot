@@ -1,12 +1,5 @@
-import { Mood } from '../../../mood';
-
-interface Message {
-    id: string;
-    text: string;
-    isUser: boolean;
-    timestamp: Date;
-    mood?: Mood;
-}
+import { Mood } from '../../../config/moodConfig';
+import { Message } from '../../../types';
 
 export const typeMessage = async (
     text: string,

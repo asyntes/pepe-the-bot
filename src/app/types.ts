@@ -1,4 +1,4 @@
-import { Mood } from '../../mood';
+import { Mood } from './config/moodConfig';
 
 export interface Message {
     id: string;
@@ -20,3 +20,5 @@ export interface MoodState {
     lastDetectedMood: Mood;
     nonMatchingCount: number;
 }
+
+export type { Mood };

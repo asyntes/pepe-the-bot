@@ -1,4 +1,4 @@
-import { Mood } from '../../mood';
+import { Mood } from '../../config/moodConfig';
 
 export type { Mood };
 
