@@ -3,11 +3,11 @@ import { MoodState } from '../types';
 
 const predefinedResponses = {
     neutral: [
-        'Processing request...',
-        'Data acknowledged.',
-        'Command received.',
-        'Analyzing input parameters.',
-        'System nominal.'
+        'Quantum processors engaged...',
+        'Accessing temporal data streams...',
+        'Neural matrix calibrating...',
+        'Interfacing with consciousness layer...',
+        'Synaptic pathways stabilizing...'
     ],
     angry: [
         'ERROR: PATIENCE.EXE HAS STOPPED WORKING',
