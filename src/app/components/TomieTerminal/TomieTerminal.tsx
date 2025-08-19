@@ -2,9 +2,9 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { moodColors, moodEyes } from '../../mood/moodConfig';
-import { generateFullResponse } from '../../mood/responseHandler';
-import { createInitialMoodState, updateMoodState } from '../../mood/stateManager';
+import { moodColors, moodEyes } from '../../domain/moodConfig';
+import { generateFullResponse } from '../../domain/responseHandler';
+import { createInitialMoodState, updateMoodState } from '../../domain/stateManager';
 import { generateMoodStyles } from './utils/moodStyleGenerator';
 import { typeMessage } from './utils/typingEffect';
 import { handleCommand } from './utils/terminalCommands';
