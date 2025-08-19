@@ -1,4 +1,3 @@
-import { Mood } from '../../../mood';
 import { generateId } from '../../../utils';
 import { Message } from '../../../types';
 
