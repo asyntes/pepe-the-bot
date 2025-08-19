@@ -13,6 +13,7 @@ import { useMessageHandling } from './hooks/useMessageHandling';
 import { LoadingDots } from './components/LoadingDots';
 import { Message, MoodState } from './types';
 import { useI18n } from '../../i18n/useI18n';
+import { processLinksInText } from './utils/linkUtils';
 
 export default function TomieTerminal() {
     const [input, setInput] = useState('');
@@ -308,7 +309,7 @@ export default function TomieTerminal() {
 
                                         return i === 0 ? (
                                             <span key={i}>
-                                                {line}
+                                                {processLinksInText(line)}
                                                 {showCursor && (
                                                     <span
                                                         className="ml-0.5"
@@ -320,7 +321,7 @@ export default function TomieTerminal() {
                                             </span>
                                         ) : (
                                             <div key={i} className="ml-12">
-                                                {line}
+                                                {processLinksInText(line)}
                                                 {showCursor && (
                                                     <span
                                                         className="ml-0.5"
