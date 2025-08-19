@@ -73,6 +73,20 @@ export default function TomieTerminal() {
         return () => window.removeEventListener('resize', handleResize);
     }, [inputFocused, isTouchDevice, updateCursorPosition]);
 
+    const handleTerminalClick = useCallback((e: React.MouseEvent) => {
+        if (isTouchDevice) return;
+        
+        const target = e.target as HTMLElement;
+        const isInputArea = target === inputRef.current || inputRef.current?.contains(target);
+        const isMessageArea = target.closest('.message-content');
+        
+        if (isInputArea) {
+            inputRef.current?.focus();
+        } else if (!isMessageArea) {
+            inputRef.current?.blur();
+        }
+    }, [isTouchDevice]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!input.trim() || isTyping || isProcessing) return;
@@ -185,6 +199,7 @@ export default function TomieTerminal() {
                 paddingTop: isSafari && isTouchDevice ? 'env(safe-area-inset-top)' : '0',
                 paddingBottom: isSafari && isTouchDevice ? 'env(safe-area-inset-bottom)' : '0'
             }}
+            onClick={handleTerminalClick}
         >
             <style dangerouslySetInnerHTML={{ __html: dynamicStyles }} />
 
@@ -267,7 +282,7 @@ export default function TomieTerminal() {
                     {messages.map((message, index) => (
                         <div
                             key={message.id}
-                            className="mb-2 transition-all duration-500"
+                            className="mb-2 transition-all duration-500 message-content"
                         >
                             <div className="flex items-center gap-2 mb-1">
                                 <span
@@ -339,7 +354,7 @@ export default function TomieTerminal() {
                         </div>
                     ))}
                     {showLoadingDots && (
-                        <div className="mb-2 transition-all duration-500">
+                        <div className="mb-2 transition-all duration-500 message-content">
                             <div className="flex items-center gap-2 mb-1">
                                 <span
                                     className="opacity-60"
@@ -379,7 +394,7 @@ export default function TomieTerminal() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-4">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2" onClick={() => !isTouchDevice && inputRef.current?.focus()}>
                     <span style={{ color: currentColors.secondary }}>{'>'}</span>
                     <div className="flex-1 relative">
                         <input
