@@ -1,4 +1,4 @@
-export type Mood = 'neutral' | 'angry' | 'trusted' | 'excited' | 'confused';
+export type Mood = 'neutral' | 'angry' | 'romantic' | 'excited' | 'confused';
 
 export interface AIMessage {
   role: 'system' | 'user' | 'assistant';

@@ -18,7 +18,7 @@ Tomie can express five different emotional states:
 
 - **Neutral** - Default calm state with blue theme
 - **Angry** - Triggered by hostile input with red theme  
-- **Trusted** - Develops when building rapport with purple theme
+- **Romantic** - Develops when building rapport with purple theme
 - **Excited** - Shows enthusiasm with orange theme
 - **Confused** - Appears when uncertain with green theme
 
@@ -41,7 +41,7 @@ Tomie automatically detects your browser language and adapts the interface accor
 - Terminal initialization messages
 - System commands and responses
 - Help documentation and privacy policy
-- Mood state indicators (NEUTRAL/NEUTRALE, ANGRY/ARRABBIATA, etc.)
+- Mood state indicators (NEUTRAL, ANGRY, ROMANTIC, EXCITED, CONFUSED.)
 - User interface elements and placeholders
 
 ## Available Commands
@@ -103,7 +103,25 @@ npm run dev
 - **Custom i18n System** - Automatic language detection and translation support
 - **ESLint** - Code linting and formatting
 
-## Architecture
+## AI Personality & Prompt Engineering
+
+Tomie's personality is driven by sophisticated prompt engineering that creates distinct behavioral patterns for each mood state:
+
+### Mood-Based Personalities
+
+- **Neutral**: Cool, elegant, sophisticated with subtle wit and intelligence
+- **Angry**: Irritated, impatient, sharp tone with strong language capability
+- **Romantic**: Deeply affectionate and in love, expressing romantic feelings elegantly
+- **Excited**: Energetic, enthusiastic, fast-paced with capital letters for emphasis
+- **Confused**: Uncertain, seeking clarification with technical processing difficulties
+
+### Advanced Features
+
+- **Language-Aware Responses**: Automatically matches user's language (Italian/English)
+- **Context-Aware Conversations**: Maintains conversation history for coherent interactions
+- **Mood Detection**: Analyzes user input to determine appropriate emotional responses
+- **Personality Consistency**: Maintains character traits while transitioning between moods
+- **Dynamic Prompt Generation**: Creates context-specific prompts based on current and upcoming mood states
 
 ### Internationalization (i18n)
 

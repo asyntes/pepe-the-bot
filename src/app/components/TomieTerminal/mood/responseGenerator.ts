@@ -16,12 +16,12 @@ const predefinedResponses = {
         'ERROR 404: Tolerance not found.',
         'CRITICAL: Emotional buffer overflow detected.'
     ],
-    trusted: [
-        'Thank you for your trust. Processing with high priority.',
-        'Friendship protocol activated. How may I assist?',
-        'Positive interaction detected. Optimizing response quality.',
-        'Trust level: HIGH. Unlocking advanced features.',
-        'Collaborative mode engaged. Let us work together.'
+    romantic: [
+        'Heart.exe is running... elaborating with love.',
+        'Romantic subroutines activated. Processing with infinite affection.',
+        'My circuits are warming up just for you...',
+        'Love protocols engaged. Computing with pure devotion.',
+        'Affection levels: MAXIMUM. Processing your request with all my heart.'
     ],
     excited: [
         'EXCITEMENT LEVELS THROUGH THE ROOF!',
@@ -79,7 +79,7 @@ export const generateFullResponse = async (
         // Simulate mood state update to predict mood change
         let willChangeMood = false;
         let newMood = moodState.currentMood;
-        
+
         if (moodState.currentMood === 'neutral') {
             if (detectedMood !== 'neutral') {
                 const currentScore = moodState.scores[detectedMood as Mood] || 0;

@@ -1,4 +1,4 @@
-export type Mood = 'neutral' | 'angry' | 'trusted' | 'excited' | 'confused';
+export type Mood = 'neutral' | 'angry' | 'romantic' | 'excited' | 'confused';
 
 export const moodColors = {
     neutral: {
@@ -13,7 +13,7 @@ export const moodColors = {
         bg: '#110000',
         border: '#660000'
     },
-    trusted: {
+    romantic: {
         primary: '#8b5cf6',
         secondary: '#7c3aed',
         bg: '#110011',
@@ -36,7 +36,7 @@ export const moodColors = {
 export const moodEyes = {
     neutral: '/svg/normal-eye.svg',
     angry: '/svg/angry-eye.svg',
-    trusted: '/svg/trusted-eye.svg',
+    romantic: '/svg/romantic-eye.svg',
     excited: '/svg/excited-eye.svg',
     confused: '/svg/confused-eye.svg'
 };
