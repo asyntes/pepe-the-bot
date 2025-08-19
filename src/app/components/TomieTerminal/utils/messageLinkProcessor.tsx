@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const processLinksInText = (text: string): React.ReactNode => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const parts = text.split(urlRegex);
