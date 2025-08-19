@@ -63,10 +63,6 @@ export const useTerminalSetup = (
         setIsSafari(isSafariBrowser);
         setIsTouchDevice(touchDevice);
 
-        if (!touchDevice) {
-            inputRef.current?.focus();
-        }
-
         const handleOrientationChange = () => {
             const viewport = document.querySelector('meta[name=viewport]');
             if (viewport) {
