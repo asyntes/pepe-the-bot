@@ -1,13 +1,6 @@
 import { Mood } from '../../../mood';
-import { generateId } from '../../../lib';
-
-interface Message {
-    id: string;
-    text: string;
-    isUser: boolean;
-    timestamp: Date;
-    mood?: Mood;
-}
+import { generateId } from '../../../utils';
+import { Message } from '../../../types';
 
 export const handleCommand = (
     command: string,

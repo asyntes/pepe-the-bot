@@ -5,7 +5,7 @@ import {
   PRIVACY_INFO,
   MOOD_PERSONALITIES,
   MOOD_DETECTION_GUIDELINES
-} from '../prompts';
+} from '../../../constants';
 
 export class PromptGenerator {
   static generateSystemPrompt(currentMood: Mood, upcomingMood?: Mood): string {

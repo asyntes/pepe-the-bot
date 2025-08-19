@@ -3,16 +3,13 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { moodColors, moodEyes, generateFullResponse, createInitialMoodState, updateMoodState } from '../../mood';
-import { generateMoodStyles } from './styles/moodStyleGenerator';
-import { typeMessage } from './typing/typingEffect';
-import { handleCommand } from './commands/terminalCommands';
+import { generateMoodStyles, typeMessage, handleCommand, processLinksInText } from '../../utils/ui';
 import { useTerminalSetup } from './hooks/useTerminalSetup';
 import { useMessageHandling } from './hooks/useMessageHandling';
 import { LoadingDots } from './components/LoadingDots';
 import { Message, MoodState } from '../../types';
-import { useI18n } from './i18n/useI18n';
-import { processLinksInText } from './utils/messageLinkProcessor';
-import { generateId } from '../../lib';
+import { useI18n } from '../../i18n/useI18n';
+import { generateId } from '../../utils';
 import styles from './TomieTerminal.module.css';
 
 export default function TomieTerminal() {

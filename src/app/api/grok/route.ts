@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GrokService, AIRequest } from '../../services/ai';
+import { GrokService, AIRequest } from '../../services';
 
 export async function POST(request: NextRequest) {
     try {
