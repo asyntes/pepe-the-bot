@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { moodColors, moodEyes } from '../../config/moodConfig';
+import { moodColors, moodEyes } from '../../mood/moodConfig';
 import { generateFullResponse } from '../../mood/responseHandler';
 import { createInitialMoodState, updateMoodState } from '../../mood/stateManager';
 import { generateMoodStyles } from './utils/moodStyleGenerator';

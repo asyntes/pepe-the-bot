@@ -1,4 +1,4 @@
-import { Mood } from '../config/moodConfig';
+import { Mood } from './moodConfig';
 import { MoodState } from '../types';
 
 
