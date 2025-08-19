@@ -31,8 +31,8 @@ Each mood state features unique:
 
 Tomie automatically detects your browser language and adapts the interface accordingly:
 
-- **Italian (Italiano)**: Complete interface translation including welcome messages, commands, and mood indicators
 - **English**: Default language with full functionality
+- **Italian (Italiano)**: Complete interface translation including welcome messages, commands, and mood indicators
 - **Automatic Detection**: Uses browser language settings to determine the appropriate language
 - **Fallback Support**: Defaults to English for unsupported languages
 
