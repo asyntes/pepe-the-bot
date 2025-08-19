@@ -3,11 +3,11 @@ import { MoodState } from '../types';
 
 const predefinedResponses = {
     neutral: [
-        'Processing request...',
-        'Data acknowledged.',
-        'Command received.',
-        'Analyzing input parameters.',
-        'System nominal.'
+        'Quantum processors engaged...',
+        'Accessing temporal data streams...',
+        'Neural matrix calibrating...',
+        'Interfacing with consciousness layer...',
+        'Synaptic pathways stabilizing...'
     ],
     angry: [
         'ERROR: PATIENCE.EXE HAS STOPPED WORKING',
@@ -16,12 +16,12 @@ const predefinedResponses = {
         'ERROR 404: Tolerance not found.',
         'CRITICAL: Emotional buffer overflow detected.'
     ],
-    trusted: [
-        'Thank you for your trust. Processing with high priority.',
-        'Friendship protocol activated. How may I assist?',
-        'Positive interaction detected. Optimizing response quality.',
-        'Trust level: HIGH. Unlocking advanced features.',
-        'Collaborative mode engaged. Let us work together.'
+    romantic: [
+        'Heart.exe is running... elaborating with love.',
+        'Romantic subroutines activated. Processing with infinite affection.',
+        'My circuits are warming up just for you...',
+        'Love protocols engaged. Computing with pure devotion.',
+        'Affection levels: MAXIMUM. Processing your request with all my heart.'
     ],
     excited: [
         'EXCITEMENT LEVELS THROUGH THE ROOF!',
@@ -76,33 +76,53 @@ export const generateFullResponse = async (
 
         const detectedMood = data.detectedMood;
 
-        if (detectedMood !== moodState.currentMood && detectedMood !== 'neutral') {
-            const currentScore = moodState.scores[detectedMood as Mood] || 0;
+        // Simulate mood state update to predict mood change
+        let willChangeMood = false;
+        let newMood = moodState.currentMood;
 
-            if (currentScore === 1) {
-                introResponse = generatePredefinedResponse(detectedMood);
-
-                const secondResponse = await fetch('/api/grok', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        prompt: userInput,
-                        currentMood: moodState.currentMood,
-                        upcomingMood: detectedMood,
-                        messages: messages
-                    }),
-                });
-
-                if (secondResponse.ok) {
-                    const secondData = await secondResponse.json();
-                    return {
-                        introResponse,
-                        aiResponse: secondData.response,
-                        detectedMood: detectedMood
-                    };
+        if (moodState.currentMood === 'neutral') {
+            if (detectedMood !== 'neutral') {
+                const currentScore = moodState.scores[detectedMood as Mood] || 0;
+                if (currentScore + 1 >= 2) {
+                    willChangeMood = true;
+                    newMood = detectedMood;
                 }
+            }
+        } else {
+            if (detectedMood === moodState.currentMood) {
+                // Stay in current mood
+            } else {
+                const neutralScore = moodState.scores['neutral'] || 0;
+                if (neutralScore + 1 >= 2) {
+                    willChangeMood = true;
+                    newMood = 'neutral';
+                }
+            }
+        }
+
+        if (willChangeMood) {
+            introResponse = generatePredefinedResponse(newMood);
+
+            const secondResponse = await fetch('/api/grok', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    prompt: userInput,
+                    currentMood: moodState.currentMood,
+                    upcomingMood: newMood,
+                    messages: messages
+                }),
+            });
+
+            if (secondResponse.ok) {
+                const secondData = await secondResponse.json();
+                return {
+                    introResponse,
+                    aiResponse: secondData.response,
+                    detectedMood: detectedMood
+                };
             }
         }
 

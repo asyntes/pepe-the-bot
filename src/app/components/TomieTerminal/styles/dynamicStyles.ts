@@ -2,12 +2,12 @@ import { Mood, moodColors } from '../mood/moodConfig';
 
 export const generateDynamicStyles = (currentMood: Mood): string => {
     const currentColors = moodColors[currentMood];
-    
+
     const getRGBFromMood = (mood: Mood): string => {
         switch (mood) {
             case 'neutral': return '0, 170, 255';
             case 'angry': return '255, 51, 51';
-            case 'trusted': return '139, 92, 246';
+            case 'romantic': return '139, 92, 246';
             case 'excited': return '255, 170, 0';
             case 'confused': return '85, 255, 85';
             default: return '0, 170, 255';

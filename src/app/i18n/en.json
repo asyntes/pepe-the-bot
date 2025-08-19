@@ -17,7 +17,7 @@
   "moods": {
     "neutral": "NEUTRAL",
     "angry": "ANGRY",
-    "trusted": "TRUSTED",
+    "romantic": "ROMANTIC",
     "excited": "EXCITED",
     "confused": "CONFUSED"
   },

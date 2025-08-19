@@ -57,7 +57,7 @@ export const createInitialMoodState = (): MoodState => ({
     scores: {
         neutral: 0,
         angry: 0,
-        trusted: 0,
+        romantic: 0,
         excited: 0,
         confused: 0
     },

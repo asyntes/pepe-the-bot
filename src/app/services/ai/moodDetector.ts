@@ -2,7 +2,7 @@ import { Mood } from './types';
 
 export class MoodDetector {
   private static readonly VALID_MOODS: Mood[] = [
-    'neutral', 'angry', 'trusted', 'excited', 'confused'
+    'neutral', 'angry', 'romantic', 'excited', 'confused'
   ];
 
   static extractMoodFromResponse(text: string): Mood {

@@ -23,7 +23,7 @@ interface Translations {
   moods: {
     neutral: string;
     angry: string;
-    trusted: string;
+    romantic: string;
     excited: string;
     confused: string;
   };
@@ -93,36 +93,36 @@ export const useI18n = () => {
 
   const formatPrivacyPolicy = (): string => {
     const privacy = translations[language].privacy;
-    
+
     let policy = `${privacy.title}\n\n`;
     policy += `${privacy.dataProcessing}\n`;
-    
+
     privacy.bulletPoints.forEach((point: string) => {
       policy += `- ${point}\n`;
     });
-    
+
     policy += `\n${privacy.securityTitle}\n`;
     policy += `${privacy.securityIntro}\n`;
-    
+
     privacy.securityPoints.forEach((point: string) => {
       policy += `- ${point}\n`;
     });
-    
+
     policy += `\n${privacy.thirdPartyTitle}\n`;
-    
+
     privacy.thirdPartyPoints.forEach((point: string) => {
       policy += `- ${point}\n`;
     });
-    
+
     policy += `\n${privacy.retention}\n\n`;
     policy += `${privacy.questions}\n`;
-    
+
     privacy.links.forEach((link: string) => {
       policy += `- ${link}\n`;
     });
-    
+
     policy += `\n${privacy.lastUpdated} ${new Date().toLocaleDateString()}`;
-    
+
     return policy;
   };
 
