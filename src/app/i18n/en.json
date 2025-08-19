@@ -57,6 +57,7 @@
       "xAI Privacy Policy: https://x.ai/privacy",
       "Vercel Privacy Policy: https://vercel.com/legal/privacy-policy"
     ],
-    "lastUpdated": "Last updated:"
+    "lastUpdated": "Last updated:",
+    "dataResponse": "Conversations are temporary and not saved on servers. Just press /clear or close the page to delete the conversation - no data is ever stored on servers."
   }
 }
