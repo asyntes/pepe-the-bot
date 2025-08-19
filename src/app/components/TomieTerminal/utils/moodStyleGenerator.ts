@@ -1,4 +1,4 @@
-import { Mood, moodColors } from '../../../config/moodConfig';
+import { Mood, moodColors } from '../../../domain/moodConfig';
 
 export const generateMoodStyles = (currentMood: Mood): string => {
     const currentColors = moodColors[currentMood];

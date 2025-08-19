@@ -1,9 +1,9 @@
-import { Mood } from '../config/moodConfig';
+import { Mood } from './moodConfig';
 import { MoodState } from '../types';
-import { predefinedResponses } from '../constants';
+import { systemMessages } from './systemMessages';
 
 export const generatePredefinedResponse = (mood: Mood): string => {
-    const moodResponses = predefinedResponses[mood];
+    const moodResponses = systemMessages[mood];
     return moodResponses[Math.floor(Math.random() * moodResponses.length)];
 };
 

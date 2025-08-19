@@ -1,6 +1,6 @@
-import { Mood } from '../config/moodConfig';
+import { Mood } from './moodConfig';
 
-export const predefinedResponses: Record<Mood, string[]> = {
+export const systemMessages: Record<Mood, string[]> = {
     neutral: [
         'Quantum processors engaged...',
         'Accessing temporal data streams...',

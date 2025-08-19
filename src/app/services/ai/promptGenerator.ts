@@ -1,11 +1,11 @@
-import { Mood } from '../../config/moodConfig';
+import { Mood } from '../../domain/moodConfig';
 import { 
   BASE_SYSTEM_PROMPT,
   CREATOR_INFO,
   PRIVACY_INFO,
   MOOD_PERSONALITIES,
   MOOD_DETECTION_GUIDELINES
-} from '../../constants';
+} from './prompts';
 
 export class PromptGenerator {
   static generateSystemPrompt(currentMood: Mood, upcomingMood?: Mood): string {
