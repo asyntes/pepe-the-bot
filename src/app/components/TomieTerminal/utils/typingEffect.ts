@@ -1,5 +1,5 @@
-import { Mood } from '../../../mood';
-import { Message } from '../../../types/ui';
+import { Mood } from '../../../config/moodConfig';
+import { Message } from '../../../types';
 
 export const typeMessage = async (
     text: string,
