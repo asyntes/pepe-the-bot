@@ -1,6 +1,13 @@
 export type Mood = 'neutral' | 'angry' | 'romantic' | 'excited' | 'confused';
 
-export const moodColors = {
+interface MoodColors {
+    primary: string;
+    secondary: string;
+    bg: string;
+    border: string;
+}
+
+export const moodColors: Record<Mood, MoodColors> = {
     neutral: {
         primary: '#00aaff',
         secondary: '#0088cc',
@@ -33,7 +40,7 @@ export const moodColors = {
     }
 };
 
-export const moodEyes = {
+export const moodEyes: Record<Mood, string> = {
     neutral: '/svg/normal-eye.svg',
     angry: '/svg/angry-eye.svg',
     romantic: '/svg/romantic-eye.svg',

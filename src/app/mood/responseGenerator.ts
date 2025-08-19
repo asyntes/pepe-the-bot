@@ -76,7 +76,6 @@ export const generateFullResponse = async (
 
         const detectedMood = data.detectedMood;
 
-        // Simulate mood state update to predict mood change
         let willChangeMood = false;
         let newMood = moodState.currentMood;
 
@@ -90,7 +89,6 @@ export const generateFullResponse = async (
             }
         } else {
             if (detectedMood === moodState.currentMood) {
-                // Stay in current mood
             } else {
                 const neutralScore = moodState.scores['neutral'] || 0;
                 if (neutralScore + 1 >= 2) {

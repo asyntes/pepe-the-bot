@@ -2,18 +2,19 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { moodColors, moodEyes } from '../mood/moodConfig';
-import { generateFullResponse } from '../mood/responseGenerator';
-import { createInitialMoodState, updateMoodState } from '../mood/moodAnalyzer';
-import { generateDynamicStyles } from '../styles/dynamicStyles';
-import { typeMessage } from '../typing/typewriter';
-import { handleCommand } from '../commands/commandHandler';
-import { useTerminalSetup } from '../hooks/useTerminalSetup';
-import { useMessageHandling } from '../hooks/useMessageHandling';
-import { LoadingDots } from './LoadingDots';
-import { Message, MoodState } from '../types';
-import { useI18n } from '../i18n/useI18n';
-import { processLinksInText } from '../utils/linkUtils';
+import { moodColors, moodEyes } from '../../mood/moodConfig';
+import { generateFullResponse } from '../../mood/responseGenerator';
+import { createInitialMoodState, updateMoodState } from '../../mood/moodAnalyzer';
+import { generateDynamicStyles } from './styles/dynamicStyles';
+import { typeMessage } from './typing/typewriter';
+import { handleCommand } from './commands/commandHandler';
+import { useTerminalSetup } from './hooks/useTerminalSetup';
+import { useMessageHandling } from './hooks/useMessageHandling';
+import { LoadingDots } from './components/LoadingDots';
+import { Message, MoodState } from '../../types';
+import { useI18n } from './i18n/useI18n';
+import { processLinksInText } from './utils/linkUtils';
+import styles from './TomieTerminal.module.css';
 
 export default function TomieTerminal() {
     const [input, setInput] = useState('');
@@ -161,7 +162,7 @@ export default function TomieTerminal() {
     if (!isInitialized) {
         return (
             <div
-                className="w-full h-screen font-mono text-base flex items-center justify-center"
+                className={styles.container}
                 style={{
                     backgroundColor: currentColors.bg,
                     color: currentColors.primary
@@ -174,7 +175,7 @@ export default function TomieTerminal() {
 
     return (
         <div
-            className={`w-full font-mono text-base transition-all duration-1000 ${isGlitching ? 'glitch-active' : ''}`}
+            className={`${styles.terminal} ${isGlitching ? 'glitch-active' : ''}`}
             style={{
                 backgroundColor: currentColors.bg,
                 color: currentColors.primary,
@@ -191,7 +192,7 @@ export default function TomieTerminal() {
                 <div className="interference-overlay" />
             )}
             <div
-                className="flex items-center justify-between p-2 border-b transition-all duration-1000"
+                className={styles.header}
                 style={{
                     borderColor: currentColors.border,
                     backgroundColor: currentColors.bg,

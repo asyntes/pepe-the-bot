@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import styles from './LoadingDots.module.css';
 
 interface LoadingDotsProps {
     color: string;
@@ -21,7 +22,7 @@ export const LoadingDots: React.FC<LoadingDotsProps> = ({ color }) => {
     }, []);
 
     return (
-        <span style={{ color, display: 'inline-block', minWidth: '1.5rem' }}>
+        <span className={styles.loadingDots} style={{ color }}>
             {dots}
         </span>
     );
