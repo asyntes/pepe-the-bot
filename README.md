@@ -1,6 +1,6 @@
 # Tomie
 
-An interactive AI terminal interface built with Next.js and React. Tomie responds with different emotional states, each with unique personality traits, visual styles, and behaviors. Powered by xAI's Grok API with custom prompt engineering.
+An interactive AI terminal interface built with Next.js and React and powered by xAI's Grok API with custom prompt engineering.. Tomie responds with different emotional states, each with unique personality traits, visual styles, and behaviors.
 
 ## Features
 
