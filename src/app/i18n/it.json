@@ -57,6 +57,7 @@
       "Informativa Privacy xAI: https://x.ai/privacy",
       "Informativa Privacy Vercel: https://vercel.com/legal/privacy-policy"
     ],
-    "lastUpdated": "Ultimo aggiornamento:"
+    "lastUpdated": "Ultimo aggiornamento:",
+    "dataResponse": "Le chat sono temporanee e non vengono salvate sui server. Basta premere /clear o chiudere la pagina per cancellare la conversazione - nessun dato viene mai memorizzato sui server."
   }
 }
