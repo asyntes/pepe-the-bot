@@ -1,4 +1,6 @@
-export type Mood = 'neutral' | 'angry' | 'romantic' | 'excited' | 'confused';
+import { Mood } from '../../mood';
+
+export type { Mood };
 
 export interface AIMessage {
   role: 'system' | 'user' | 'assistant';

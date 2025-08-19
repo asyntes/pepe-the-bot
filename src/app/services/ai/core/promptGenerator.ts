@@ -1,11 +1,11 @@
-import { Mood } from './types';
+import { Mood } from '../types';
 import { 
   BASE_SYSTEM_PROMPT,
   CREATOR_INFO,
   PRIVACY_INFO,
   MOOD_PERSONALITIES,
   MOOD_DETECTION_GUIDELINES
-} from './prompts';
+} from '../../../constants';
 
 export class PromptGenerator {
   static generateSystemPrompt(currentMood: Mood, upcomingMood?: Mood): string {

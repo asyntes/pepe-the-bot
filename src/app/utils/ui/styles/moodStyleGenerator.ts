@@ -1,6 +1,6 @@
-import { Mood, moodColors } from '../mood/moodConfig';
+import { Mood, moodColors } from '../../../mood';
 
-export const generateDynamicStyles = (currentMood: Mood): string => {
+export const generateMoodStyles = (currentMood: Mood): string => {
     const currentColors = moodColors[currentMood];
 
     const getRGBFromMood = (mood: Mood): string => {

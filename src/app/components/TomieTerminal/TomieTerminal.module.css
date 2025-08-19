@@ -1,0 +1,161 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  font-family: monospace;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.terminal {
+  width: 100%;
+  font-family: monospace;
+  font-size: 1rem;
+  transition: all 1s;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border-bottom: 1px solid;
+  transition: all 1s;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.moodDisplay {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid;
+  border-radius: 0.25rem;
+  transition: all 1s;
+}
+
+.mainContent {
+  flex: 1;
+  position: relative;
+}
+
+.eyeContainer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.eyeImage {
+  width: 16rem;
+  height: 16rem;
+  object-fit: contain;
+}
+
+.messagesContainer {
+  overflow-y: auto;
+  padding: 1rem;
+  position: relative;
+  z-index: 10;
+  height: 100%;
+}
+
+.message {
+  margin-bottom: 0.5rem;
+  transition: all 0.5s;
+}
+
+.messageHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.timestamp {
+  opacity: 0.6;
+}
+
+.messageContent {
+  transition: all 0.5s;
+}
+
+.userMessage {
+  font-weight: bold;
+}
+
+.promptSymbol {
+  margin: 0 0.25rem;
+}
+
+.loadingContainer {
+  margin-left: 0.125rem;
+}
+
+.responseContainer {
+  margin-left: 3rem;
+}
+
+.inputForm {
+  padding: 1rem;
+}
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inputWrapper {
+  flex: 1;
+  position: relative;
+}
+
+.terminalInput {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.terminalInputNoCaret {
+  caret-color: transparent;
+}
+
+.cursor {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  font-family: monospace;
+}
+
+.submitButton {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid;
+  transition: all 0.2s;
+}
+
+.submitButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+}
+
+.divider {
+  margin-top: 0.5rem;
+  height: 1px;
+  transition: all 1s;
+}
+
+.glitchText {
+  position: relative;
+}

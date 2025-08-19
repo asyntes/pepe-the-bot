@@ -1,14 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Mood } from '../mood/moodConfig';
+import { Mood } from '../../../mood';
 import { useI18n } from '../../../i18n/useI18n';
-
-interface Message {
-    id: string;
-    text: string;
-    isUser: boolean;
-    timestamp: Date;
-    mood?: Mood;
-}
+import { Message } from '../../../types';
 
 export const useTerminalSetup = (
     inputRef: React.RefObject<HTMLInputElement | null>

@@ -1,12 +1,5 @@
-import { Mood } from '../mood/moodConfig';
-
-interface Message {
-    id: string;
-    text: string;
-    isUser: boolean;
-    timestamp: Date;
-    mood?: Mood;
-}
+import { generateId } from '../../../utils';
+import { Message } from '../../../types';
 
 export const handleCommand = (
     command: string,
@@ -23,7 +16,7 @@ export const handleCommand = (
 
         setTimeout(() => {
             const systemMessage: Message = {
-                id: Date.now().toString(),
+                id: generateId(),
                 text: t('commands.cleared'),
                 isUser: false,
                 timestamp: new Date()
@@ -35,7 +28,7 @@ export const handleCommand = (
 
     if (lowerCommand === '/help') {
         const userMessage: Message = {
-            id: Date.now().toString(),
+            id: generateId(),
             text: command,
             isUser: true,
             timestamp: new Date()
@@ -54,7 +47,7 @@ export const handleCommand = (
 
     if (lowerCommand === '/repo') {
         const userMessage: Message = {
-            id: Date.now().toString(),
+            id: generateId(),
             text: command,
             isUser: true,
             timestamp: new Date()
@@ -75,7 +68,7 @@ export const handleCommand = (
 
     if (lowerCommand === '/privacy') {
         const userMessage: Message = {
-            id: Date.now().toString(),
+            id: generateId(),
             text: command,
             isUser: true,
             timestamp: new Date()
@@ -93,7 +86,7 @@ export const handleCommand = (
     }
 
     const userMessage: Message = {
-        id: Date.now().toString(),
+        id: generateId(),
         text: command,
         isUser: true,
         timestamp: new Date()
