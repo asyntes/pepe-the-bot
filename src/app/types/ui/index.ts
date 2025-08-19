@@ -1,4 +1,4 @@
-import { Mood } from '../../mood/moodConfig';
+import { Mood } from '../../mood';
 
 export interface Message {
     id: string;

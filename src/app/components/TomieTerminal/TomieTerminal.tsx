@@ -2,9 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { moodColors, moodEyes } from '../../mood/moodConfig';
-import { generateFullResponse } from '../../mood/responseGenerator';
-import { createInitialMoodState, updateMoodState } from '../../mood/moodAnalyzer';
+import { moodColors, moodEyes, generateFullResponse, createInitialMoodState, updateMoodState } from '../../mood';
 import { generateDynamicStyles } from './styles/dynamicStyles';
 import { typeMessage } from './typing/typewriter';
 import { handleCommand } from './commands/commandHandler';
@@ -14,6 +12,7 @@ import { LoadingDots } from './components/LoadingDots';
 import { Message, MoodState } from '../../types';
 import { useI18n } from './i18n/useI18n';
 import { processLinksInText } from './utils/linkUtils';
+import { generateId } from '../../lib';
 import styles from './TomieTerminal.module.css';
 
 export default function TomieTerminal() {
@@ -88,7 +87,7 @@ export default function TomieTerminal() {
         }
 
         const userMessage: Message = {
-            id: Date.now().toString(),
+            id: generateId(),
             text: input,
             isUser: true,
             timestamp: new Date()

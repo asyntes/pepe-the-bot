@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Mood } from '../../../mood/moodConfig';
+import { Mood } from '../../../mood';
 import { useI18n } from '../i18n/useI18n';
 
 interface Message {
