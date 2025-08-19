@@ -2,18 +2,18 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { moodColors, moodEyes } from './mood/moodConfig';
-import { generateFullResponse } from './mood/responseGenerator';
-import { createInitialMoodState, updateMoodState } from './mood/moodAnalyzer';
-import { generateDynamicStyles } from './styles/dynamicStyles';
-import { typeMessage } from './typing/typewriter';
-import { handleCommand } from './commands/commandHandler';
-import { useTerminalSetup } from './hooks/useTerminalSetup';
-import { useMessageHandling } from './hooks/useMessageHandling';
-import { LoadingDots } from './components/LoadingDots';
-import { Message, MoodState } from './types';
-import { useI18n } from '../../i18n/useI18n';
-import { processLinksInText } from './utils/linkUtils';
+import { moodColors, moodEyes } from '../mood/moodConfig';
+import { generateFullResponse } from '../mood/responseGenerator';
+import { createInitialMoodState, updateMoodState } from '../mood/moodAnalyzer';
+import { generateDynamicStyles } from '../styles/dynamicStyles';
+import { typeMessage } from '../typing/typewriter';
+import { handleCommand } from '../commands/commandHandler';
+import { useTerminalSetup } from '../hooks/useTerminalSetup';
+import { useMessageHandling } from '../hooks/useMessageHandling';
+import { LoadingDots } from './LoadingDots';
+import { Message, MoodState } from '../types';
+import { useI18n } from '../i18n/useI18n';
+import { processLinksInText } from '../utils/linkUtils';
 
 export default function TomieTerminal() {
     const [input, setInput] = useState('');

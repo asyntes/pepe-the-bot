@@ -1,4 +1,4 @@
-import TomieTerminal from "./components/TomieTerminal/TomieTerminal";
+import TomieTerminal from "./components/TomieTerminal";
 
 export default function Home() {
   return (
