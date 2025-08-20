@@ -1,11 +1,4 @@
-export type Mood = 'neutral' | 'angry' | 'romantic' | 'excited' | 'confused';
-
-interface MoodColors {
-    primary: string;
-    secondary: string;
-    bg: string;
-    border: string;
-}
+import { Mood, MoodColors } from '../types/mood';
 
 export const moodColors: Record<Mood, MoodColors> = {
     neutral: {

@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Mood } from '../../../domain/moodConfig';
+import { Mood } from '../../../types/mood';
 import { useI18n } from '../../../i18n/useI18n';
-import { Message } from '../../../types';
+import { Message } from '../../../types/message';
 
 export const useTerminalSetup = (
     inputRef: React.RefObject<HTMLInputElement | null>

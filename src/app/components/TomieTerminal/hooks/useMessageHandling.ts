@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { Message } from '../../../types';
+import { Message } from '../../../types/message';
 
 export const useMessageHandling = (messages: Message[]) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);

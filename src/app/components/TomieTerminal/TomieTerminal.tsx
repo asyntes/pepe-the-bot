@@ -12,7 +12,8 @@ import { processLinksInText } from './utils/messageLinkProcessor';
 import { useTerminalSetup } from './hooks/useTerminalSetup';
 import { useMessageHandling } from './hooks/useMessageHandling';
 import { LoadingDots } from './components/LoadingDots';
-import { Message, MoodState } from '../../types';
+import { Message } from '../../types/message';
+import { MoodState } from '../../types/mood';
 import { useI18n } from '../../i18n/useI18n';
 import styles from './TomieTerminal.module.css';
 

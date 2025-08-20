@@ -1,5 +1,5 @@
-import { Mood } from './moodConfig';
-import { MoodState } from '../types';
+import { Mood } from '../types/mood';
+import { MoodState } from '../types/mood';
 import { systemMessages } from './systemMessages';
 
 export const generatePredefinedResponse = (mood: Mood): string => {
