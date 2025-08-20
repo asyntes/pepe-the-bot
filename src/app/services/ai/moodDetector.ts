@@ -1,4 +1,4 @@
-import { Mood } from '../../domain/moodConfig';
+import { Mood } from '../../types/mood';
 
 export class MoodDetector {
   private static readonly VALID_MOODS: Mood[] = [

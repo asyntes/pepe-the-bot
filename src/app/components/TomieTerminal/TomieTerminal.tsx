@@ -2,9 +2,9 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { moodColors, moodEyes } from '../../domain/moodConfig';
-import { generateFullResponse } from '../../domain/responseHandler';
-import { createInitialMoodState, updateMoodState } from '../../domain/stateManager';
+import { moodColors, moodEyes } from '../../core/moodConfig';
+import { generateFullResponse } from '../../core/responseHandler';
+import { createInitialMoodState, updateMoodState } from '../../core/stateManager';
 import { generateMoodStyles } from './utils/moodStyleGenerator';
 import { typeMessage } from './utils/typingEffect';
 import { handleCommand } from './utils/terminalCommands';
@@ -12,7 +12,8 @@ import { processLinksInText } from './utils/messageLinkProcessor';
 import { useTerminalSetup } from './hooks/useTerminalSetup';
 import { useMessageHandling } from './hooks/useMessageHandling';
 import { LoadingDots } from './components/LoadingDots';
-import { Message, MoodState } from '../../types';
+import { Message } from '../../types/message';
+import { MoodState } from '../../types/mood';
 import { useI18n } from '../../i18n/useI18n';
 import styles from './TomieTerminal.module.css';
 

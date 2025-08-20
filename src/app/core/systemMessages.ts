@@ -1,4 +1,4 @@
-import { Mood } from './moodConfig';
+import { Mood } from '../types/mood';
 
 export const systemMessages: Record<Mood, string[]> = {
     neutral: [

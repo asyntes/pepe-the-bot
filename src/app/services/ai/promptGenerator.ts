@@ -1,4 +1,4 @@
-import { Mood } from '../../domain/moodConfig';
+import { Mood } from '../../types/mood';
 import { 
   BASE_SYSTEM_PROMPT,
   CREATOR_INFO,

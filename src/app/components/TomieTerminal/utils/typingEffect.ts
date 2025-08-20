@@ -1,5 +1,5 @@
-import { Mood } from '../../../domain/moodConfig';
-import { Message } from '../../../types';
+import { Mood } from '../../../types/mood';
+import { Message } from '../../../types/message';
 
 export const typeMessage = async (
     text: string,

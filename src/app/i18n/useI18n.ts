@@ -4,7 +4,7 @@ import itTranslations from './it.json';
 
 export type Language = 'en' | 'it';
 
-interface Translations {
+export interface Translations {
   terminal: {
     initializing: string;
     mood: string;
